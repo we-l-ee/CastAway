@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\BIG Parents">
+      <UniqueIdentifier>{c892e551-0592-4b66-9f73-12c09459c1c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lights">
+      <UniqueIdentifier>{8d5da614-a6cf-49f0-ba40-f6078bb52e85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics Classes">
+      <UniqueIdentifier>{8552bf71-9ccf-4b20-8c99-37ce0d40c357}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Dynamic Classes">
+      <UniqueIdentifier>{e050ef9c-68fe-4960-934d-da6e986ec61e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphic Classes">
+      <UniqueIdentifier>{27c92e05-9b42-459b-a40a-dfc5f1e7409d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\BIG Parents">
+      <UniqueIdentifier>{3dac415c-178a-4626-9f7b-33d51ccfa6f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics Classes">
+      <UniqueIdentifier>{083d91c6-1b58-463e-baff-7c152ebf48a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Physics Classes">
+      <UniqueIdentifier>{0eaf42c4-ae3a-4b2d-852c-ad63d3f6265a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Dynamic Classes">
+      <UniqueIdentifier>{56ceeeca-3770-4239-8108-21d8638728f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lights">
+      <UniqueIdentifier>{49482c8c-934f-4ee1-86fd-ff972e83f485}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Specilized Classes">
+      <UniqueIdentifier>{2879b7bc-e39e-404c-bdb3-affe12ff0631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Specilized Classes">
+      <UniqueIdentifier>{c07fd9b2-a170-47e8-aa3e-ede9fc3abf17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Exceptions">
+      <UniqueIdentifier>{1fe4e37e-7924-4d8b-b1f6-fc79b006bcac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Runners">
+      <UniqueIdentifier>{b1c405d0-11a5-42b2-b8bb-2865cd8f76a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Runners">
+      <UniqueIdentifier>{ef02be0c-433b-4437-9a9e-f677148ad681}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Exceptions">
+      <UniqueIdentifier>{36729bcd-ae54-4cac-83c8-476058fde86c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpotLight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\BIG Parents</Filter>
+    </ClCompile>
+    <ClCompile Include="Moveable.cpp">
+      <Filter>Source Files\BIG Parents</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="GDynamicDefaultObject.cpp">
+      <Filter>Source Files\Dynamic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="pDynamicObject.cpp">
+      <Filter>Source Files\Physics Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="pKinematicObject.cpp">
+      <Filter>Source Files\Physics Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="pStaticObject.cpp">
+      <Filter>Source Files\Physics Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="PointLight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="GSpotLight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="GPointLight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="GBasicObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GDefaultObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="DirecLight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="GDirecLight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="GObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="pObject.cpp">
+      <Filter>Source Files\Physics Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultDynamicObject.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="DefaultStaticObject.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="pPerson.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\BIG Parents</Filter>
+    </ClCompile>
+    <ClCompile Include="GExceptions.cpp">
+      <Filter>Source Files\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\Runners</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Source Files\Runners</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Source Files\Runners</Filter>
+    </ClCompile>
+    <ClCompile Include="GBasicTextureObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GDefaultSplatObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="FlashLight.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Sun.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Seon.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GDynamicBasicObject.cpp">
+      <Filter>Source Files\Dynamic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GMapNRObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Sky.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GBasicLightObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GMapNSObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\BIG Parents</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultDynamicObject.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultStaticObject.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="DirecLight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="GBasicObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GDefaultObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GDirecLight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="GDynamicDefaultObject.h">
+      <Filter>Header Files\Dynamic Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GPointLight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="GSpotLight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Moveable.h">
+      <Filter>Header Files\BIG Parents</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="pDynamicObject.h">
+      <Filter>Header Files\Physics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="pKinematicObject.h">
+      <Filter>Header Files\Physics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="pObject.h">
+      <Filter>Header Files\Physics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="pPerson.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="pStaticObject.h">
+      <Filter>Header Files\Physics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="SpotLight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="stddef.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\BIG Parents</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Header Files\Runners</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Header Files\Runners</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Runners</Filter>
+    </ClInclude>
+    <ClInclude Include="GExceptions.h">
+      <Filter>Header Files\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="GBasicTextureObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GDefaultSplatObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Seon.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Sun.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="FlashLight.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Sky.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GMapNRObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GDynamicBasicObject.h">
+      <Filter>Header Files\Dynamic Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GBasicLightObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GMapNSObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Debug\shaders\gobject\basic.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gobject\basic.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gobject\onlydepth.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gobject\onlydepth.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\renderscene.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\renderscene.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gdefaultobject\default.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gdefaultobject\default.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="..\Debug\shaders\gobject\basictexture.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gobject\basictexture.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\glight\basic_light.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\glight\basic_light.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\glight\basictexture_light.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\glight\basictexture_light.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\bloom.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\bloom.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\blurHorizantal.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\blurHorizantal.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\blurVertical.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\world\blurVertical.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

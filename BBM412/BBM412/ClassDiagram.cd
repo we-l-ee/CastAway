@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Camera" Collapsed="true">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACMBAAQ0AAAAGgAgMAAgAgAAEAAECkQADQAABAIQg=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DefaultDynamicObject" Collapsed="true">
+    <Position X="9.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAwAAAgAAAAAAAAAQAAACGAAAAgAAAAJAAAAcBCE=</HashCode>
+      <FileName>DefaultDynamicObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GDirecLight" Collapsed="true">
+    <Position X="4.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAACAAAgAAAAAAAAAAEAgAAIACAAAA=</HashCode>
+      <FileName>GDirecLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GException" Collapsed="true">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACACAAAAAAAA=</HashCode>
+      <FileName>GExceptions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GGround" Collapsed="true">
+    <Position X="12.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>GGround.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GHands" Collapsed="true">
+    <Position X="15.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAIIAABCAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GHands.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GObject" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABACAIAAAABAAgAAAAAAAAIBAUAAAQAAAEAAQAAA=</HashCode>
+      <FileName>GObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GPointLight" Collapsed="true">
+    <Position X="3.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gCAAAABAAgAAAAAACCAQAAACAAAAAAAgAAAAIAAYBAA=</HashCode>
+      <FileName>GPointLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GSun" Collapsed="true">
+    <Position X="3.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgCAAAAAAAAEAAAAAAAAAAAAAECAAAAAAAEUAAE=</HashCode>
+      <FileName>GSun.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PObject" Collapsed="true">
+    <Position X="12.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAIAQABAAAAAAAAAABAAAAAABA=</HashCode>
+      <FileName>PObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GWall" Collapsed="true">
+    <Position X="6.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgGAAgAEAAAAAAAQAAACAhAQAACAAQEBAAAcFCE=</HashCode>
+      <FileName>GWall.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Moveable" Collapsed="true">
+    <Position X="1.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAIAAAABAACQBAACAAAAAAAAAAAAAIAABAA=</HashCode>
+      <FileName>Moveable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World" Collapsed="true">
+    <Position X="19.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAACBAAhAADABAgAAAAIAAAAACGAAECoIAAAARABA=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GSpotLight" Collapsed="true">
+    <Position X="6.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GSpotLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="DirecLight" Collapsed="true">
+    <Position X="18" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>GDirecLight.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Texture" Collapsed="true">
+    <Position X="19.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GObject.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="PointLight" Collapsed="true">
+    <Position X="18" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAIAAAAAAAIAIAAAAAAACAAAAIICBAAAA=</HashCode>
+      <FileName>GPointLight.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="pl1" Collapsed="true">
+    <Position X="19.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAIAAAAAAAIAIAAAAAAACAAAAIACBAAAA=</HashCode>
+      <FileName>GSun.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="CameraMovement" Collapsed="true">
+    <Position X="19.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAkAAAAAAAAgAACICUAAgAIAAAAABAAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Speed" Collapsed="true">
+    <Position X="18" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BUTTON_STATES" Collapsed="true">
+    <Position X="18" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABEEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
