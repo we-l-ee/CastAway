@@ -1,0 +1,18 @@
+Using 1 channel color to represent instensity of spotlight. 8bit would be enough.
+GObject all have static variable which indicates the current avaible texture unit(could be used in sampler.).
+setLight function must not send unnacesary buffers.(Direction changes allways so it`s not realy doable.)
+
+implement in GObject static step function and variable for setting and getting last STEP! as deltaTime.
+
+
+pPerson class must adapt to sliding and doing falling when sliding.
+
+for infinite sky take the camera position an move the fuck away that much of the position
+
+
+updates that needed:
+after creating the world call deltaTime function of GLFW to make a start fresh for delta time. Needed because world creating takes long time!
+
+after the jump of the pPerson class there is no calculation for collision up ahead so it must be done. Algorithms as follows, look 10 units ahead if there is hit do nothing
+and just make a flag there is hit so after flags hits is 1 or true check if there is a hit in next step. In other word if there is a hit in previous step but not in current step
+that means jumps excideded the object that was ahead.
