@@ -30,11 +30,11 @@ class pPerson :
 	btVector3 dir_vel_f;
 	
 	inline glm::vec3 groundMovement(CameraMovement direction, double deltaTime, Speed sp = Speed::NORMAL);
-	GLfloat vel;
+	double vel;
 
-	GLfloat currentYOffset;
-	GLfloat neel_sin{ 90.0f };
-	GLfloat rot{ -45.0 };
+	double currentYOffset;
+	double neel_sin{ 90.0f };
+	double rot{ -45.0 };
 	inline void neeling(double deltaTime);
 
 	inline void jump(double deltaTime);
