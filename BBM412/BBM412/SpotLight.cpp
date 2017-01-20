@@ -4,7 +4,9 @@
 
 
 SpotLight::SpotLight(const glm::vec3 & dis, const glm::vec3 & color):spotlight{ glm::vec3{.0f}, glm::vec3{ .0f, .0f , -1.0f }, color } , 
-									strengthData{ spotlight.ambient , spotlight.diffuse , spotlight.specular , 0.1} , Moveable(dis)
+	strengthData{ spotlight.ambient , spotlight.diffuse , 
+	spotlight.specular , 0.1} , Moveable(dis)
+	, current_strength(1.0f), delta_strength(0.1f)
 {
 }
 
@@ -21,27 +23,13 @@ SpotLight::SpotLight(const std::string & obj, const glm::vec3 & dis): SpotLight(
 {
 }
 
-SpotLight::SpotLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis) : Moveable(dis), spotlight{ readLightFile("objects\\" + sub + "\\" + obj + ".light") },
-strengthData{ spotlight.ambient , spotlight.diffuse , spotlight.specular , 0.1 }
+SpotLight::SpotLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis) : 
+	Moveable(dis), spotlight{ readLightFile("objects\\" + sub + "\\" + obj + ".light") },
+	strengthData{ spotlight.ambient , spotlight.diffuse , spotlight.specular , 0.1 }
+	, current_strength(1.0f), delta_strength(0.1f)
 {
 
 }
-
-bool SpotLight::isActive() const
-{
-	return active;
-}
-
-void SpotLight::setActive(bool s)
-{
-	active = s;
-}
-
-void SpotLight::toggleActive()
-{
-	active = !active;
-}
-
 
 
 SpotLightData SpotLight::getSpotLight() const
@@ -146,11 +134,11 @@ SpotLightData SpotLight::readLightFile(const std::string & path) {
 		}
 		else if (cmd == "cu") {
 			file >> p[0];
-			cutOff = p[0];
+			cutOff = cos(glm::radians(p[0]));
 		}
 		else if (cmd == "oc") {
 			file >> p[0];
-			outerCutOff = p[0];
+			outerCutOff = cos(glm::radians(p[0]));
 		}
 
 		file.ignore(1024, '\n');
@@ -163,10 +151,10 @@ SpotLightData SpotLight::readLightFile(const std::string & path) {
 
 glm::mat4 SpotLight::getLightViewMatrix()
 {
-	return glm::mat4();
+	return glm::lookAt(position - dir.Forward, position - 2*dir.Forward, dir.Up);
 }
 
 glm::mat4 SpotLight::getLightProjMatrix()
 {
-	return glm::mat4();
+	return glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 1000.0f);
 }

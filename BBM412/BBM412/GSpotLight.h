@@ -6,19 +6,20 @@ class GSpotLight :
 	public SpotLight, public GBasicLightObject
 {
 public:
-	GSpotLight(const std::string & obj, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
-	GSpotLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
+	GSpotLight(const std::string & obj, const GLuint & _prog = GBasicLightObject::program);
+	GSpotLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = GBasicLightObject::program);
 	
-	GSpotLight(const std::string & sub, const std::string & obj, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
-	GSpotLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
-	GSpotLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _vbo, const GLuint & _points_size,
-		const GLuint & _prog = (GLuint)RenderMode::WIREFRAME ) ;
+	GSpotLight(const std::string & sub, const std::string & obj, const GLuint & _prog = GBasicLightObject::program);
+	GSpotLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = GBasicLightObject::program);
 
-	GSpotLight(const std::string & obj, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GSpotLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _vbo, const GLuint & _points_size, 
-		const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GSpotLight(const std::string & sub, const std::string & obj, const GLuint & _vbo, const GLuint & _points_size, 
-		const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
+	GSpotLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size,
+		const GLuint & _prog = GBasicLightObject::program) ;
+
+	GSpotLight(const std::string & obj, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = GBasicLightObject::program );
+	GSpotLight(const std::string & sub, const std::string & obj, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size,
+		const GLuint & _prog = GBasicLightObject::program);
+	GSpotLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size,
+		const GLuint & _prog = GBasicLightObject::program );
 
 
 

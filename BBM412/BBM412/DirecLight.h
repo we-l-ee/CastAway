@@ -11,17 +11,21 @@
 class DirecLight : public virtual Moveable, public Light
 {
 
-	bool active{ true };
 
 protected:
 
 	DirecLightData direclight;
+	float current_strength;
+	float delta_strength;
+
 	StrengthData strengthData;
 
 	void calculateDirecLight(const glm::vec3 & center);
 	void calculateDirecLightToCenter();
 
 public:
+	DirecLight(const DirecLightData & _direclight, const glm::vec3 & displacement);
+
 	DirecLight(const glm::vec3 & dis = glm::vec3(.0f), const glm::vec3 & color = glm::vec3(1.f));
 	DirecLight(const std::string & obj);
 
@@ -29,10 +33,6 @@ public:
 	DirecLight(const std::string & obj, const glm::vec3 & dis);
 	DirecLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis);
 
-	bool isActive() const;
-
-	void setActive(bool s);
-	void toggleActive();
 
 	DirecLightData getDirecLight() const;
 

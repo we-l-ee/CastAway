@@ -6,15 +6,6 @@ class pDynamicObject : public pObject
 {
 
 
-protected:
-
-	btDefaultMotionState* motionState;
-	btRigidBody* rigidBody;
-	btCollisionShape* collisionShape;
-
-protected:
-
-	void constructRigidBody();
 
 public:
 	pDynamicObject();

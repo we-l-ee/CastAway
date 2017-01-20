@@ -84,7 +84,7 @@ glm::vec3 pPerson::groundMovement(CameraMovement direction, double deltaTime, Sp
 
 	if( (int)(direction & CameraMovement::FORWARD) )
 	{
-		getForwardRay(5.0, start, end);
+		getForwardXZRay(5.0, start, end);
 		btCollisionWorld::ClosestRayResultCallback cb_f(start, end);
 		btWorld->rayTest(start, end, cb_f);
 		_cos = glm::dot(
@@ -149,7 +149,9 @@ glm::vec3 pPerson::groundMovement(CameraMovement direction, double deltaTime, Sp
 		position.y = cb_d.m_hitPointWorld.getY() + CAMERA_HEIGHT;
 	else
 	{
+#ifdef _DEBUG
 		cout << "Stat Fallin" << endl;
+#endif
 		if (direction == CameraMovement::FORWARD) { vel_f = forward; }
 		state = FALL;
 		fall(deltaTime);
@@ -163,7 +165,9 @@ inline void pPerson::neeling(double deltaTime)
 	double _rot = rot * deltaTime;
 	neel_sin = neel_sin + _rot;
 	position.y = currentYOffset + sin(glm::radians( neel_sin ) )*CAMERA_HEIGHT;
+#ifdef _DEBUG
 	cout << position.y <<"[e]"<<neel_sin<<"[e]"<<rot<< endl;
+#endif
 
 	if (neel_sin <= 45)
 	{
@@ -186,12 +190,16 @@ inline void pPerson::calculateState()
 	btWorld->rayTest(start, end, cb_d);
 	if (cb_d.hasHit())
 	{
+#ifdef _DEBUG
 		cout << "Allready on the ground" << endl;
+#endif
 		position.y = cb_d.m_hitPointWorld.getY() + 2.80f;
 	}
 	else
 	{
+#ifdef _DEBUG
 		cout << "State FALL" << endl;
+#endif
 		state = FALL;
 	}
 }
@@ -287,8 +295,9 @@ inline void pPerson::fall(double deltaTime)
 		if (cb_d2.hasHit() && position.y <= cb_d2.m_hitPointWorld.getY() + CAMERA_HEIGHT)
 		{
 			vel = glm::sqrt(glm::length2(vel_d) + glm::length2(vel_f));
-
+#ifdef _DEBUG
 			cout <<"total vel:"<< vel << endl;
+#endif
 
 			if (vel > 20)
 			{
@@ -304,8 +313,9 @@ inline void pPerson::fall(double deltaTime)
 			vel_f = glm::vec3{ 0 };
 			position.y = cb_d2.m_hitPointWorld.getY() + CAMERA_HEIGHT;
 			jump_forward = false;
-
+#ifdef _DEBUG
 			cout << vel << endl;
+#endif
 			currentYOffset = cb_d2.m_hitPointWorld.getY();
 		}
 	}
@@ -313,7 +323,9 @@ inline void pPerson::fall(double deltaTime)
 	if ( cb_d.hasHit() && position.y <= cb_d.m_hitPointWorld.getY()+ CAMERA_HEIGHT)
 	{
 		vel = glm::sqrt(glm::length2(vel_d) + glm::length2(vel_f));
+#ifdef _DEBUG
 		cout << "total vel:" << vel << endl;
+#endif
 
 
 		if (vel > 20)
@@ -406,8 +418,10 @@ void pPerson::startJump(CameraMovement direction, Speed sp)
 
 	vel_d = glm::vec3{ 0 };
 
+#ifdef _DEBUG
 	cout << dir_vel_f << "[e]"<<jump_forward<<endl;
 	//cout << vel_f << endl;
+#endif
 }
 
 

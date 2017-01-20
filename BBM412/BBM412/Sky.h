@@ -1,16 +1,18 @@
 #pragma once
-#include "GBasicTextureObject.h"
+#include "GTiledTextureObject.h"
 class Sky :
-	public GBasicTextureObject
+	public GTiledTextureObject
 {
 	static GLuint VAO, VBO;
+	static unsigned int POINTS_SIZE;
 	static Texture DAY,NIGHT;
-
+	
 public:
-	Sky();
+	Sky(const glm::vec3 & displacement);
 
+	void render() override;
 
-	void initialize();
+	static void initialize();
 
 	~Sky();
 };

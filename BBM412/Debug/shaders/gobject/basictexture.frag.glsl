@@ -1,10 +1,18 @@
 #version 430 core
 
 layout(location = 100) uniform sampler2D diffuse;
-in vec2 texCoord;
 
-out vec4 fcolor;
+smooth in vec2 texCoord;
+
+layout(location = 0) out vec4 fcolor;
+layout(location = 1) out vec4 blurcolor;
+
 
 void main(void) {
 	fcolor = texture(diffuse, texCoord);
+	blurcolor = vec4(vec3(0),1.0);
+
+
+	//fcolor = vec4(vec3(texture(diffuse, texCoord).w), 1.0);
+
 }

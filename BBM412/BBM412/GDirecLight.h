@@ -8,15 +8,24 @@ class GDirecLight :
 
 public:
 
-	GDirecLight(const std::string & obj, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GDirecLight(const std::string & sub, const std::string & obj, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GDirecLight(const std::string & obj,const glm::vec3 & dis, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GDirecLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
+	GDirecLight(const std::string & obj, const GLuint & _prog = GBasicLightObject::program);
+	GDirecLight(const std::string & obj, const glm::vec4 & _color, const GLuint & _prog = GBasicLightObject::program);
 
-	GDirecLight(const std::string & obj, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GDirecLight(const std::string & sub, const std::string & obj, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GDirecLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GDirecLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
+	GDirecLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = GBasicLightObject::program);
+
+
+	GDirecLight(const std::string & sub, const std::string & obj, const GLuint & _prog = GBasicLightObject::program);
+	GDirecLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = GBasicLightObject::program);
+	GDirecLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const glm::vec4 & _color, const GLuint & _prog = GBasicLightObject::program);
+
+	GDirecLight(const std::string & obj, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = GBasicLightObject::program);
+	GDirecLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size,
+		const GLuint & _prog = GBasicLightObject::program);
+
+	GDirecLight(const std::string & sub,  const std::string & obj, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size,
+		const GLuint & _prog = GBasicLightObject::program);
+	GDirecLight(const std::string & sub, const std::string & obj,  const glm::vec3 & dis, const GLuint & _vao, const GLuint & _vbo,
+		const GLuint & _points_size, const GLuint & _prog = GBasicLightObject::program);
 	
 
 	// Inherited via Moveable

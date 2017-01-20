@@ -1,7 +1,17 @@
 #include "DirecLight.h"
+#include <iostream>
+using namespace std;
+
+
+DirecLight::DirecLight(const DirecLightData & _direclight, const glm::vec3 & displacement):
+	direclight(_direclight), strengthData(direclight.ambient,direclight.diffuse,direclight.specular,0.1f),
+	current_strength(1.0f), delta_strength(0.1f),Moveable(displacement)
+{
+}
 
 DirecLight::DirecLight(const glm::vec3 & dis, const glm::vec3 & color) :direclight{ glm::vec3{ 0,0,0 }, color },
-strengthData{ direclight.ambient , direclight.diffuse , direclight.specular , 0.1 }, Moveable(dis)
+	strengthData{ direclight.ambient , direclight.diffuse , direclight.specular , 0.1 }, Moveable(dis)
+	, current_strength(1.0f), delta_strength(0.1f)
 {
 }
 
@@ -24,21 +34,9 @@ DirecLight::DirecLight(const std::string & sub, const std::string & obj, const g
 {
 }
 
-bool DirecLight::isActive() const
-{
-	return active;
-}
 
-void DirecLight::setActive(bool s)
-{
-	active = s;
 
-}
 
-void DirecLight::toggleActive()
-{
-	active = !active;
-}
 
 DirecLightData DirecLight::getDirecLight() const
 {
@@ -47,13 +45,13 @@ DirecLightData DirecLight::getDirecLight() const
 
 void DirecLight::calculateDirecLight(const glm::vec3 & center)
 {
-	direclight.direction = center - glm::vec3{ camera->getViewMatrix()*glm::vec4{ Moveable::position,glm::vec1{ 1.0 } } };
+	direclight.direction = glm::vec3{ camera->getViewMatrix()*glm::vec4{  -Moveable::position + center, glm::vec1{ 0.0 }  } };
 }
 
 void DirecLight::calculateDirecLightToCenter()
 {
 
-	direclight.direction = -glm::vec3{ camera->getViewMatrix()*glm::vec4{ Moveable::position,glm::vec1{ 1.0 } } };
+	direclight.direction = glm::vec3{ camera->getViewMatrix()*glm::vec4{  -Moveable::position, glm::vec1{ 0.0 } } };
 
 }
 
@@ -75,18 +73,19 @@ void DirecLight::increaseLightStrength()
 
 void DirecLight::decreaseLightStrength()
 {
-	if (direclight.ambient == glm::vec3{ .0f })
-		return;
-
-	direclight.ambient -= strengthData.delta_ambient;
-	direclight.diffuse -= strengthData.delta_diffuse;
-	direclight.specular -= strengthData.delta_specular;
-	if (direclight.ambient < glm::vec3{ .0f })
+	if (direclight.ambient <= glm::vec3{ .0f })
 	{
 		direclight.ambient = glm::vec3{ 0.0f };
 		direclight.diffuse = glm::vec3{ 0.0f };
 		direclight.specular = glm::vec3{ 0.0f };
+		return;
 	}
+
+
+	direclight.ambient -= strengthData.delta_ambient;
+	direclight.diffuse -= strengthData.delta_diffuse;
+	direclight.specular -= strengthData.delta_specular;
+
 }
 
 void DirecLight::calculateLightening()
@@ -110,7 +109,7 @@ DirecLightData DirecLight::readLightFile(const std::string &path) {
 	while (!file.eof()) {
 		GLfloat p[3];
 
-		if (cmd == "d") {
+		if (cmd == "p") {
 			file >> p[0] >> p[1] >> p[2];
 			dir = glm::vec3{ p[0],p[1],p[2] };
 		}
@@ -125,6 +124,7 @@ DirecLightData DirecLight::readLightFile(const std::string &path) {
 		else if (cmd == "d") {
 			file >> p[0] >> p[1] >> p[2];
 			diffuse = glm::vec3{ p[0], p[1], p[2] };
+			cout << "Diffuse:" << diffuse << endl;
 		}
 		else if (cmd == "s") {
 			file >> p[0] >> p[1] >> p[2];
@@ -142,11 +142,12 @@ DirecLightData DirecLight::readLightFile(const std::string &path) {
 glm::mat4 DirecLight::getLightViewMatrix()
 {
 	glm::vec3 forward = glm::normalize(position);
-	return glm::lookAt(forward * 100, forward, GameObject::WorldUp);
+	return glm::lookAt(position, glm::vec3{ 0,0,0 }, GameObject::WorldUp);
 }
 
 glm::mat4 DirecLight::getLightProjMatrix()
 {
-	GLfloat near_plane = 1.0f, far_plane = 1000.0f;
+	GLfloat near_plane = 100, far_plane = 1000.0f;
 	return glm::ortho(-100.0f, 100.0f, -100.0f, 100.0f, near_plane, far_plane);
+
 }

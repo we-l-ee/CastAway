@@ -169,9 +169,11 @@ vec3 directLightCalculations() {
 		float diff = max(0.0, dot(lightDir, normal));
 		float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
 
-		vec3 ambient = directLight[i].ambient * vec3(texture(diffuse, texCoord).xyz);
-		vec3 diffuse = directLight[i].diffuse * diff * vec3(texture(diffuse, texCoord).xyz);
-		vec3 specular = directLight[i].specular * spec * m_specular;
+		vec3 color = vec3(texture(diffuse, texCoord).xyz);
+
+		vec3 ambient = directLight[i].ambient * color;
+		vec3 diffuse = directLight[i].diffuse * diff * color;
+		vec3 specular = directLight[i].specular * spec * (color*m_specular);
 
 		result += ambient*directLight[i].color + diffuse*directLight[i].color + specular*directLight[i].color;
 	}

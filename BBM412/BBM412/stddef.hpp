@@ -12,7 +12,7 @@
 #endif
 
 
-#define print(x) std::cout<<#x " "<<x;
+#define printd(x) std::cout<<#x " "<<x;
 #define	newline std::cout<<std::endl;
 
 inline std::ostream& operator<< (std::ostream& stream, const glm::vec3 & vec) {
@@ -88,25 +88,34 @@ inline bool operator<= (const glm::vec3 a, const glm::vec3 & b) {
 
 enum class RenderMode
 {
-	DEFAULT, BASIC_TEXTURE, WIREFRAME, SHADOW_CALC, REFLECTION_CALC, SIZE
+	DEFAULT, BASIC_TEXTURE, WIREFRAME, REFLECTION_CALC, SHADOW_CALC,  SIZE
 };
 
 inline RenderMode operator+(RenderMode a, unsigned int b) {
-	return static_cast<RenderMode>( (static_cast<int>(a) + b) % static_cast<int>(RenderMode::SIZE) );
+	return static_cast<RenderMode>( (static_cast<int>(a) + b) );
 }
-
+inline RenderMode operator%(RenderMode a, RenderMode b) {
+	return static_cast<RenderMode>((static_cast<int>(a) % static_cast<int>(b)));
+}
 
 enum class Tools {
 	Pick, Toggle, Seon, LightPick
 };
 inline Tools operator&(Tools a, Tools b) {
-	return static_cast<Tools>(static_cast<int>(a) | static_cast<int>(b));
+	return static_cast<Tools>(static_cast<int>(a) & static_cast<int>(b));
 }
 
 enum class Options {
 	Seon_White, Seon_Red, Seon_Blue, Seon_Random,
 	Toggle_Rotate, Toggle_Translate
 };
+inline Options operator+(Options a, unsigned int b) {
+	return static_cast<Options>((static_cast<int>(a) + b));
+}
+inline Options operator%(Options a, Options b) {
+	return static_cast<Options>((static_cast<int>(a) % static_cast<int>(b)));
+}
+
 
 enum class CameraMovement {
 	NO_MOVE=0,

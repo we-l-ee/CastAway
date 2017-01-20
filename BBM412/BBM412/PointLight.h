@@ -12,20 +12,18 @@
 class PointLight :
 	virtual public Moveable, public Light
 {
-	bool active{ true };
 	
 
 protected:
 	PointLightData pointlight;
+	float current_strength;
+	float delta_strength;
+
 	StrengthData strengthData;
 
 	inline void calculationAfterTranslate();
 
 public:
-	bool isActive() const;
-	
-	void setActive(bool s);
-	void toggleActive();
 
 	PointLight(const glm::vec3 & dis = glm::vec3(.0f), const glm::vec3 & color = glm::vec3(1.f));
 

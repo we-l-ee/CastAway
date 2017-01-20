@@ -10,15 +10,36 @@ pObject::pObject()
 {
 }
 
-void pObject::addRigidBody(const string & obj, const glm::vec3 & dis)
+btRigidBody *  pObject::addRigidBody(const string & obj, const glm::vec3 & dis, const glm::quat & rot )
 {
-	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(0, 0, 0, 1), btVector3(dis.x, dis.y, dis.z)));
+	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(
+		0,0,0,1
+		//rot.x, rot.y, rot.z, rot.w
+	), 
+		btVector3(dis.x , dis.y  , dis.z )));
 
 	btRigidBody *rigidBody = readObjectFile(obj, motionState);
 
 	pObject::world->addRigidBody(rigidBody);
 
 	list.insert(std::pair<btCollisionObject*, pObject*>((btCollisionObject*)rigidBody, this));
+
+	return rigidBody;
+}
+
+btRigidBody * pObject::addRigidBody(const string & obj, const glm::vec3 & dis,	btCollisionShape * _shape, const glm::quat & rot )
+{
+	btDefaultMotionState* motionState = new btDefaultMotionState(btTransform(btQuaternion(
+		0, 0, 0, 1
+		//rot.x, rot.y, rot.z, rot.w
+	), 
+		btVector3(dis.x, dis.y, dis.z)));
+
+	btRigidBody *rigidBody = readRigidFile(obj, motionState, _shape);
+	pObject::world->addRigidBody(rigidBody);
+	list.insert(std::pair<btCollisionObject*, pObject*>((btCollisionObject*)rigidBody, this));
+
+	return rigidBody;
 }
 
 inline btBvhTriangleMeshShape* pObject::readTrimesh(ifstream & in)
@@ -98,9 +119,15 @@ btRigidBody *  pObject::readObjectFile(const string & path, btMotionState * moti
 
 	btScalar mass = 0;
 	btVector3 localinertia(0, 0, 0);
-
+	bool kinematic = false;
 	string cmd;
 	in >> cmd;
+	if (cmd == "kinematic")
+	{
+		kinematic = true;
+		in.ignore(1024, '\n');
+		in >> cmd;
+	}
 	if (cmd == "mass")
 	{
 		in >> mass;
@@ -125,6 +152,13 @@ btRigidBody *  pObject::readObjectFile(const string & path, btMotionState * moti
 			shape,              // collision shape of body
 			localinertia  // local inertia
 		);
+		if (kinematic)
+		{
+			btRigidBody* body = new btRigidBody(rigidBodyCI);
+			body->setCollisionFlags(body->getCollisionFlags() |
+				btCollisionObject::CF_KINEMATIC_OBJECT);
+			body->setActivationState(DISABLE_DEACTIVATION);
+		}
 		return new btRigidBody(rigidBodyCI);
 	}
 	else if (cmd == "box")
@@ -137,10 +171,140 @@ btRigidBody *  pObject::readObjectFile(const string & path, btMotionState * moti
 			shape,              // collision shape of body
 			localinertia  // local inertia
 		);
+		if (kinematic)
+		{
+			btRigidBody* body = new btRigidBody(rigidBodyCI);
+			body->setCollisionFlags(body->getCollisionFlags() |
+				btCollisionObject::CF_KINEMATIC_OBJECT);
+			body->setActivationState(DISABLE_DEACTIVATION);
+		}
 		return new btRigidBody(rigidBodyCI);
 	}
-
+	else if (cmd == "cylinder")
+	{
+		in >> p[0] >> p[1] >> p[2];
+		btCollisionShape *shape = (btCollisionShape*) new btCylinderShape(btVector3(p[0], p[1], p[2]));
+		btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
+			mass,                  // mass
+			motionState,        // initial position
+			shape,              // collision shape of body
+			localinertia  // local inertia
+		);
+		if (kinematic)
+		{
+			btRigidBody* body = new btRigidBody(rigidBodyCI);
+			body->setCollisionFlags(body->getCollisionFlags() |
+				btCollisionObject::CF_KINEMATIC_OBJECT);
+			body->setActivationState(DISABLE_DEACTIVATION);
+		}
+		return new btRigidBody(rigidBodyCI);
+	}
+	else if (cmd == "sphere")
+	{
+		in >> p[0];
+		btCollisionShape *shape = (btCollisionShape*) new btSphereShape(p[0]);
+		btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
+			mass,                  // mass
+			motionState,        // initial position
+			shape,              // collision shape of body
+			localinertia  // local inertia
+		);
+		if (kinematic)
+		{
+			btRigidBody* body = new btRigidBody(rigidBodyCI);
+			body->setCollisionFlags(body->getCollisionFlags() |
+				btCollisionObject::CF_KINEMATIC_OBJECT);
+			body->setActivationState(DISABLE_DEACTIVATION);
+		}
+		return new btRigidBody(rigidBodyCI);
+	}
 	throw GException("pObject could not constructed\n");
+}
+
+btCollisionShape * pObject::readCollisionFile(const string & path)
+{
+	GLfloat p[3];
+
+	ifstream in{ path };
+	if (!in.is_open())
+		throw GException("File can not open for creating rigidBody in pObject::readObjectFile(). Path:\n" + path);
+	string cmd;
+	in >> cmd;
+	in.ignore(1024, '\n');
+
+	if (cmd == string("trimesh"))
+	{
+		return (btCollisionShape*)readTrimesh(in);
+	}
+	else if (cmd == "box")
+	{
+		in >> p[0] >> p[1] >> p[2];
+		return (btCollisionShape*) new btBoxShape(btVector3(p[0], p[1], p[2]));
+
+	}
+	else if (cmd == "cylinder")
+	{
+		in >> p[0] >> p[1] >> p[2];
+		return (btCollisionShape*) new btCylinderShape(btVector3(p[0], p[1], p[2]));
+
+	}
+	else if (cmd == "sphere")
+	{
+		in >> p[0];
+		return (btCollisionShape*) new btSphereShape(p[0]);
+
+	}
+	throw GException("Collison shape could not read\n");
+
+}
+
+btRigidBody* pObject::readRigidFile(const string & path, btMotionState * motionState, btCollisionShape * shape)
+{
+	GLfloat p[3];
+
+	ifstream in{ path };
+	if (!in.is_open())
+		throw GException("File can not open for creating rigidBody in pObject::readRigidFile(). Path:\n" + path);
+
+	btScalar mass = 0;
+	btVector3 localinertia(0, 0, 0);
+	bool kinematic = false;
+	string cmd;
+	in >> cmd;
+	if (cmd == "kinematic")
+	{
+		kinematic = true;
+		in.ignore(1024, '\n');
+		in >> cmd;
+	}
+	if (cmd == "mass")
+	{
+		in >> mass;
+		in.ignore(1024, '\n');
+		in >> cmd;
+	}
+	if (cmd == "localinertia")
+	{
+		in >> p[0] >> p[1] >> p[2];
+		localinertia = btVector3(p[0], p[1], p[2]);
+		in.ignore(1024, '\n');
+		in >> cmd;
+
+	}
+	btRigidBody::btRigidBodyConstructionInfo rigidBodyCI(
+		mass,                  // mass
+		motionState,        // initial position
+		shape,              // collision shape of body
+		localinertia  // local inertia
+	);
+	if (kinematic)
+	{
+		btRigidBody* body = new btRigidBody(rigidBodyCI);
+		body->setCollisionFlags(body->getCollisionFlags() |
+			btCollisionObject::CF_KINEMATIC_OBJECT);
+		body->setActivationState(DISABLE_DEACTIVATION);
+	}
+	return new btRigidBody(rigidBodyCI);
 }
 
 
@@ -164,9 +328,9 @@ glm::mat4 pObject::btTransform_glm(btTransform * transform)
 	return glm::make_mat4(data);
 }
 
-btTransform pObject::glm_btTransform(glm::mat4 matrix)
+btTransform pObject::glm_btTransform(const glm::mat4 & matrix)
 {
-	GLfloat *data = glm::value_ptr(matrix);
+	const GLfloat *data = glm::value_ptr(matrix);
 	btTransform transform;
 	transform.setFromOpenGLMatrix(data);
 	return transform;

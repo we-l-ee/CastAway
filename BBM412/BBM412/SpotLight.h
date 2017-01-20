@@ -11,12 +11,14 @@ class SpotLight :
 	virtual public Moveable, public Light
 {
 
-	bool active{ true };
 
 protected:
 	//The real position that will be used when calculating lightening. It is a dot in a aproximatly the center of the object.
 
 	SpotLightData spotlight;
+	float current_strength;
+	float delta_strength;
+
 	StrengthData strengthData;
 	
 	
@@ -28,14 +30,7 @@ public:
 	SpotLight(const std::string & obj, const glm::vec3 & dis);
 	SpotLight(const std::string & dis, const std::string & obj, const glm::vec3 & color);
 
-	bool isActive() const;
-
-	void setActive(bool s);
-	void toggleActive();
-
-
 	SpotLightData getSpotLight() const;
-
 
 	// Inherited via Light
 	virtual void calculateLightening() override;

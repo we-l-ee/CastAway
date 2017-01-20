@@ -26,7 +26,9 @@ public:
 
 	virtual void setMode(CameraMode mode) { this->cameraMode = mode; }
 
-	void getForwardRay(float to, btVector3 & start, btVector3 & end);
+	void getForwardXZRay(float to, btVector3 & start, btVector3 & end);
+	void getForwardXYZRay(float to, btVector3 & start, btVector3 & end);
+
 	void getBackwardRay(float to, btVector3 & start, btVector3 & end);
 
 	void getRightRay(float to, btVector3 & start, btVector3 & end);
@@ -91,12 +93,7 @@ private:
 	glm::mat4 projMatrix;
 	glm::mat4 viewMatrix;
 
-
-
-
 	Directions dir;
-
-
 
 	GLfloat Yaw;
 	GLfloat Pitch;

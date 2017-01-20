@@ -7,12 +7,24 @@
 
 #include "GameObject.h"
 
-
+#include "GMapAObject.h"
+#include "GMapRObject.h"
 #include "GBasicTextureObject.h"
+#include "GBasicTextureLightObject.h"
+#include "GDefaultMultiTextureObject.h"
 
 #include "Sun.h"
+#include "Moon.h"
 #include "Seon.h"
 #include "FlashLight.h"
+#include "Fern.h"
+#include "MapleTree.h"
+#include "PineTree.h"
+#include "Log.h"
+#include "GreyRock.h"
+#include "RedRock.h"
+
+#include "Sky.h"
 
 #include "Camera.h"
 #include "pPerson.h"
@@ -20,6 +32,8 @@
 
 #include "DefaultDynamicObject.h"
 #include "DefaultStaticObject.h"
+#include "StaticDefaultSplatObject.h"
+
 
 #include "Bullet\include\btBulletDynamicsCommon.h"
 
@@ -41,7 +55,7 @@ enum { BLUR_HOR, BLUR_VER, HDR_0, HDR_1, FINAL, POST_SIZE };
 
 class World
 {
-	Tools tool;
+	Tools tool{ Tools::Pick };
 	Options option;
 
 	pPerson * player;
@@ -64,8 +78,10 @@ class World
 	vector< shared_ptr<DirecLight> > direc_lights;
 	vector< shared_ptr<SpotLight> > spot_lights;
 
-	shared_ptr<Moveable> picked_obj;
-	vector< shared_ptr<Moveable> > toggled_objs;
+	Moveable* pickedRigidBody;
+	Light* pickedLight;
+	vector< Moveable* > toggled_objs;
+
 
 	vector< shared_ptr<DefaultDynamicObject> > dynamic_objects;
 	vector< shared_ptr<DefaultStaticObject> > static_objects;
@@ -74,12 +90,17 @@ class World
 
 	
 	inline void resetTools(Tools last, Tools current);
+
 	inline void toggle();
+	inline void seon();
 	inline void pick();
+	inline void lightPick();
+
 	inline void calculateButtonsStates(double deltaTime);
 	
 	inline void calculateLights(double deltaTime);
-
+	//For packing initializing and creating objects
+	//I would much rather put this processing depending outside file. Would be much neat.(LATER)
 	inline void initializeAll();
 	inline void createObjects();
 	inline GLfloat heightOf( GLfloat x, GLfloat z );
@@ -89,10 +110,20 @@ class World
 	const unsigned int SCREEN_WIDTH, SCREEN_HEIGHT;
 
 	inline void shadowRender();
-	inline void shadowRender( Light * light );
+	inline void shadowRender( Light * light, unsigned int unit);
+	GLuint reflectionFBO, reflectionTexture;
+	inline void reflectionRender();
+	shared_ptr<GMapRObject> ocean;
+
+
 	inline void allRender();
 
 	inline void stepSimulation(const double & deltaTime);
+
+	RenderMode renderMode{ RenderMode::DEFAULT };
+
+	template<typename T>
+	void deleteOccurence(vector< shared_ptr<T> > list, T item);
 public:
 
 	World() :World(1600, 800) {}
@@ -110,9 +141,14 @@ public:
 	~World();
 
 #ifdef _DEBUG
+	GLuint debug_program;
 	bool debugDrawOn{ true };
-	GLDebugDrawer *gDebug;
+	bool debugRenderOn{ false };
+	unsigned int debugView{ 0 };
+	void calculateDebugView();
 	void loopDebugView();
+	GLDebugDrawer *gDebug;
+	void debugRenderScene(GLuint texture);
 #endif
 
 
@@ -131,5 +167,11 @@ private:
 	inline void renderScene();
 
 
+	inline void bloomRender();
+
 };
 
+template<typename T>
+inline void World::deleteOccurence(vector<shared_ptr<T>> list, T item)
+{
+}

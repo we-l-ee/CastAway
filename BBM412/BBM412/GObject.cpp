@@ -11,6 +11,7 @@
 #include <sstream>
 
 using namespace std;
+glm::mat4 GObject::reflectionMatrix;
 
 glm::mat4 GObject::lightView;
 glm::mat4 GObject::lightViewProj;
@@ -18,10 +19,16 @@ glm::mat4 GObject::lightViewProj;
 	glm::mat4 GObject::debug_view;
 	glm::mat4 GObject::debug_viewProj;
 #endif
+glm::mat4 GObject::sunView;
+glm::mat4 GObject::sunViewProj;
+
+glm::mat4 GObject::spotView;
+glm::mat4 GObject::spotViewProj;
 
 GLuint GObject::sunShadowMap;
 
 GLuint GObject::GProgram[(int)RenderMode::SIZE];
+GLuint GObject::VAO[(int)RenderMode::SIZE];
 
 GLuint GObject::uniform_buffers[UNIFORM_BUFFER_SIZE];
 GLuint GObject::nums_uniform_buffers[UNIFORM_BUFFER_SIZE];
@@ -53,7 +60,7 @@ GLuint	GObject::compileShader(const char * file_dir, GLenum type)
 
 	file.close();
 
-#if (DEBUG_LVL>=1)
+#if (DEBUG_LVL>=2)
 	cout << source<<"[end]"<<endl;
 #endif // DEBUG
 
@@ -80,6 +87,22 @@ GLuint	GObject::compileShader(const char * file_dir, GLenum type)
 }
 #ifdef _DEBUG
 
+inline void GObject::wireframeRender()
+{
+}
+
+inline void GObject::basicTextureRender()
+{
+}
+
+inline void GObject::wireframeToggleRender(const glm::mat4 & model)
+{
+}
+
+inline void GObject::basicTextureToggleRender(const glm::mat4 & model)
+{
+}
+
 void GObject::setWireframeColor(const glm::vec4 & _color)
 {
 	wireframeColor = _color;
@@ -102,9 +125,9 @@ void GObject::setDebugViewProjMatrix(const glm::mat4 & view, const glm::mat4 & p
 }
 #endif 
 
-GObject::GObject()
-{
 
+GObject::GObject(const glm::mat4 & _model): GModel(_model)
+{
 }
 
 GLuint GObject::createProgram(const char * vshader, const char * fshader)
@@ -119,9 +142,12 @@ GLuint GObject::createProgram(const char * vshader, const char * fshader)
 
 	glLinkProgram(program);
 
-	GLint  linked;
+#ifdef _DEBUG
+
+
+	GLint  linked=-1;
 	glGetProgramiv(program, GL_LINK_STATUS, &linked);
-	if (!linked) {
+	if (linked != GL_TRUE) {
 
 		string msg("Program Not Linked:\n");
 		GLint  logSize;
@@ -130,10 +156,24 @@ GLuint GObject::createProgram(const char * vshader, const char * fshader)
 		glGetProgramInfoLog(program, logSize, NULL, logMsg);
 		msg += logMsg;
 		delete[] logMsg;
-
 		throw GException(msg);
 
-	}
+	} 
+	/*GLint valid;
+	glValidateProgram(program);
+	glGetProgramiv(program, GL_VALIDATE_STATUS, &valid);
+	if (valid == GL_FALSE)
+	{
+		string msg("Program Creation Error:\n");
+		GLint  logSize;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logSize);
+		char* logMsg = new char[logSize];
+		glGetProgramInfoLog(program, logSize, NULL, logMsg);
+		msg += logMsg;
+		delete[] logMsg;
+		throw GException(msg);
+	}*/
+#endif
 
 	glDeleteShader(vertex_shader);
 	glDeleteShader(fragment_shader);
@@ -269,6 +309,7 @@ Texture GObject::createTexture(string file)
 	return Texture{ Target, TextureName };
 
 }
+#ifdef _DEBUG
 
 std::string GObject::returnErrorString(GLuint err)
 {
@@ -333,6 +374,7 @@ void GObject::throwError()
 		throw GException{ stream.str() };
 	}
 }
+#endif
 
 void GObject::initialize( const vector<shared_ptr<PointLight>>* p_lights, const vector<shared_ptr<DirecLight>>* d_lights, const vector<shared_ptr<SpotLight>>* s_lights)
 {
@@ -366,6 +408,10 @@ void GObject::initialize( const vector<shared_ptr<PointLight>>* p_lights, const 
 
 	sunShadowMap = 0;
 	nextAvaibleTextureUnit = 1;
+
+	glGenVertexArrays((int)RenderMode::SIZE, VAO);
+	glBindVertexArray(VAO[(int)RenderMode::BASIC_TEXTURE]);
+
 }
 
 void GObject::setLights()
@@ -408,9 +454,9 @@ void GObject::setLights()
 			nums_uniform_buffers[2]++;
 		}
 	}
-
+#ifdef _DEBUG
 	throwError("GObject::setLights():\n");
-
+#endif
 }
 
 
@@ -423,6 +469,27 @@ void GObject::setLightViewMatrix(const glm::mat4 & view, const glm::mat4 & proj)
 {
 	GObject::lightView = view;
 	GObject::lightViewProj = proj*view;
+}
+
+void GObject::setSunViewMatrix(const glm::mat4 & view, const glm::mat4 & proj)
+{
+	sunView = view;		sunViewProj = proj*view;
+}
+
+void GObject::setSpotlightViewMatrix(const glm::mat4 & view, const glm::mat4 & proj)
+{
+	spotView = view;		spotViewProj = proj*view;
+
+}
+
+void GObject::setReflectionMatrix(const glm::mat4 & _reflectionMatrix)
+{
+	reflectionMatrix = _reflectionMatrix;
+}
+
+void GObject::setAvaibleTextureUnit(const unsigned int & text_unit)
+{
+	nextAvaibleTextureUnit = text_unit;
 }
 
 unsigned int GObject::getAvaibleTextureUnit()
@@ -440,7 +507,7 @@ void GObject::readObjectFile(string file, vector<glm::vec3>& points)
 #endif
 	ifstream in{ file };
 	if (!in.is_open())
-		throw GException("File can not open for ReadObject.\n");
+		throw GException("File can not open for GObject::readObjectFile only points.\n");
 
 	vector<glm::vec3> v;
 
@@ -498,7 +565,6 @@ void GObject::readObjectFile(string file, vector<glm::vec3>& points)
 
 		in >> cmd;
 	}
-	cout << "s" << endl;
 }
 
 void GObject::readObjectFile(string file, vector<glm::vec3>& points, vector<glm::vec2>& text_cords)
@@ -507,6 +573,95 @@ void GObject::readObjectFile(string file, vector<glm::vec3>& points, vector<glm:
 	int i = 0;
 #endif
 
+	ifstream in{ file };
+	if (!in.is_open())
+		throw GException("File can not open for ReadObject.\n");
+
+	vector<glm::vec3> v;
+	vector<glm::vec2> vt;
+
+	string cmd;
+	in >> cmd;
+	while (!in.eof()) {
+		char dlim[6];	GLfloat p[3]; GLuint pi[9];
+
+#if (DEBUG_LVL>=2)
+		cerr << "in while -> cmd:" << cmd << endl;
+#endif
+
+		if (cmd == "v") {
+			in >> p[0] >> p[1] >> p[2];
+			glm::vec3 vec{ p[0],p[1],p[2] };
+			v.push_back(vec);
+
+#if (DEBUG_LVL>=2)
+			cerr << "v:" << endl;
+			cerr << p[0] << "," << p[1] << "," << p[2] << endl;
+#endif
+
+		}
+		else if (cmd == "vt") {
+			in >> p[0] >> p[1];
+			glm::vec2 vec{ p[0],p[1] };
+			vt.push_back(vec);
+#if (DEBUG_LVL>=2)
+			cerr << "vt:" << endl;
+			cerr << p[0] << "," << p[1] << endl;
+#endif
+		}
+		else if (cmd == "f") {
+			in >> pi[0] >> dlim[0] >> pi[1]
+				>> pi[2] >> dlim[1] >> pi[3]
+				>> pi[4] >> dlim[2] >> pi[5];
+			char a = dlim[0] | dlim[1] | dlim[2];
+
+#if (DEBUG_LVL>=2)
+			cerr << "f:" << endl;
+			cerr << pi[0] << "," << pi[1] << "," << pi[2] << endl
+				<< pi[3] << "," << pi[4] << "," << pi[5] << endl
+				<< pi[6] << "," << pi[7] << "," << pi[8] << endl;
+
+			cerr << "a:" << a << endl;
+#endif
+
+			if (a != '/')
+				throw GException("Seperator is wrong when reading object.\n");
+
+			glm::vec3 vecp1{ v[pi[0] - 1] };
+			glm::vec3 vecp2{ v[pi[2] - 1] };
+			glm::vec3 vecp3{ v[pi[4] - 1] };
+
+			glm::vec2 vect1{ vt[pi[1] - 1] };
+			glm::vec2 vect2{ vt[pi[3] - 1] };
+			glm::vec2 vect3{ vt[pi[5] - 1] };
+
+
+
+			points.push_back(vecp1);			points.push_back(vecp2);			points.push_back(vecp3);
+			text_cords.push_back(vect1);			text_cords.push_back(vect2);			text_cords.push_back(vect3);
+
+
+#if (DEBUG_LVL>=2)
+			std::cout << points[i] << "||" << points[i + 1] << "||" << points[i + 2] << endl;
+			i += 3;
+#endif
+
+#if (DEBUG_LVL>=2)
+			cout << text_cords[i].x << "," << text_cords[i].y << endl;
+			cout << text_cords[i + 1].x << "," << text_cords[i + 1].y << endl;
+			cout << text_cords[i + 2].x << "," << text_cords[i + 2].y << endl;
+			i += 3;
+#endif
+
+		}
+		in.ignore(1024, '\n');
+
+		in >> cmd;
+	}
+}
+
+void GObject::readObjectFileVN(string file, vector<glm::vec3>& points, vector<glm::vec3>& normals)
+{
 	ifstream in{ file };
 	if (!in.is_open())
 		throw GException("File can not open for ReadObject.\n");
@@ -554,10 +709,10 @@ void GObject::readObjectFile(string file, vector<glm::vec3>& points, vector<glm:
 #endif
 		}
 		else if (cmd == "f") {
-			in >> pi[0] >> dlim[0] >> pi[1]
-				>> pi[2] >> dlim[1] >> pi[3]
-				>> pi[4] >> dlim[2] >> pi[5];
-			char a = dlim[0] | dlim[1] | dlim[2];
+			in >> pi[0] >> dlim[0]	>> dlim[1] >> pi[2]
+				>> pi[3] >> dlim[2] >> dlim[3] >> pi[5]
+				>> pi[6] >> dlim[4] >> dlim[5] >> pi[8];
+			char a = dlim[0] | dlim[1] | dlim[2] | dlim[3] | dlim[4] | dlim[5];
 
 #if (DEBUG_LVL>=2)
 			cerr << "f:" << endl;
@@ -572,17 +727,16 @@ void GObject::readObjectFile(string file, vector<glm::vec3>& points, vector<glm:
 				throw GException("Seperator is wrong when reading object.\n");
 
 			glm::vec3 vecp1{ v[pi[0] - 1] };
-			glm::vec3 vecp2{ v[pi[2] - 1] };
-			glm::vec3 vecp3{ v[pi[4] - 1] };
+			glm::vec3 vecp2{ v[pi[3] - 1] };
+			glm::vec3 vecp3{ v[pi[6] - 1] };
 
-			glm::vec2 vect1{ vt[pi[1] - 1] };
-			glm::vec2 vect2{ vt[pi[3] - 1] };
-			glm::vec2 vect3{ vt[pi[5] - 1] };
-
+			glm::vec3 vecn1{ vn[pi[2] - 1] };
+			glm::vec3 vecn2{ vn[pi[5] - 1] };
+			glm::vec3 vecn3{ vn[pi[8] - 1] };
 
 
 			points.push_back(vecp1);			points.push_back(vecp2);			points.push_back(vecp3);
-			text_cords.push_back(vect1);			text_cords.push_back(vect2);			text_cords.push_back(vect3);
+			normals.push_back(vecn1);			normals.push_back(vecn2);			normals.push_back(vecn3);
 
 
 #if (DEBUG_LVL>=2)
@@ -711,6 +865,121 @@ void GObject::readObjectFile(string file,
 
 		in >> cmd;
 	}
+
+}
+
+void GObject::readObjectFile(string file, vector<glm::vec3>& points, vector<glm::vec2>& text_cords, vector<glm::vec3>& normals, vector<string>& texture_names, vector<unsigned int>& switch_points)
+{
+	ifstream in{ file };
+	if (!in.is_open())
+		throw GException("File can not open for ReadObject.\n");
+
+	unsigned int index = 0;
+
+	vector<glm::vec3> v;
+	vector<glm::vec2> vt;
+	vector<glm::vec3> vn;
+
+	string cmd;
+	in >> cmd;
+	while (!in.eof()) {
+		char dlim[6];	GLfloat p[3]; GLuint pi[9];
+
+#if (DEBUG_LVL>=2)
+		cerr << "in while -> cmd:" << cmd << endl;
+#endif
+
+		if (cmd == "v") {
+			in >> p[0] >> p[1] >> p[2];
+			glm::vec3 vec{ p[0],p[1],p[2] };
+			v.push_back(vec);
+
+#if (DEBUG_LVL>=2)
+			cerr << "v:" << endl;
+			cerr << p[0] << "," << p[1] << "," << p[2] << endl;
+#endif
+
+		}
+		else if (cmd == "vt") {
+			in >> p[0] >> p[1];
+			glm::vec2 vec{ p[0],p[1] };
+			vt.push_back(vec);
+#if (DEBUG_LVL>=2)
+			cerr << "vt:" << endl;
+			cerr << p[0] << "," << p[1] << endl;
+#endif
+		}
+		else if (cmd == "vn") {
+			in >> p[0] >> p[1] >> p[2];
+			glm::vec3 vec{ p[0],p[1],p[2] };
+			vn.push_back(vec);
+#if (DEBUG_LVL>=2)
+			cerr << "vn:" << endl;
+			cerr << p[0] << "," << p[1] << "," << p[2] << endl;
+#endif
+		}
+		else if (cmd == "f") {
+			in >> pi[0] >> dlim[0] >> pi[1] >> dlim[1] >> pi[2]
+				>> pi[3] >> dlim[2] >> pi[4] >> dlim[3] >> pi[5]
+				>> pi[6] >> dlim[4] >> pi[7] >> dlim[5] >> pi[8];
+			char a = dlim[0] | dlim[1] | dlim[2] | dlim[3] | dlim[4] | dlim[5];
+
+#if (DEBUG_LVL>=2)
+			cerr << "f:" << endl;
+			cerr << pi[0] << "," << pi[1] << "," << pi[2] << endl
+				<< pi[3] << "," << pi[4] << "," << pi[5] << endl
+				<< pi[6] << "," << pi[7] << "," << pi[8] << endl;
+
+			cerr << "a:" << a << endl;
+#endif
+
+			if (a != '/')
+				throw GException("Seperator is wrong when reading object.\n");
+			index += 3;
+
+			glm::vec3 vecp1{ v[pi[0] - 1] };
+			glm::vec3 vecp2{ v[pi[3] - 1] };
+			glm::vec3 vecp3{ v[pi[6] - 1] };
+
+			glm::vec2 vect1{ vt[pi[1] - 1] };
+			glm::vec2 vect2{ vt[pi[4] - 1] };
+			glm::vec2 vect3{ vt[pi[7] - 1] };
+
+			glm::vec3 vecn1{ vn[pi[2] - 1] };
+			glm::vec3 vecn2{ vn[pi[5] - 1] };
+			glm::vec3 vecn3{ vn[pi[8] - 1] };
+
+
+			points.push_back(vecp1);			points.push_back(vecp2);			points.push_back(vecp3);
+			text_cords.push_back(vect1);			text_cords.push_back(vect2);			text_cords.push_back(vect3);
+			normals.push_back(vecn1);			normals.push_back(vecn2);			normals.push_back(vecn3);
+
+
+#if (DEBUG_LVL>=2)
+			std::cout << points[i] << "||" << points[i + 1] << "||" << points[i + 2] << endl;
+			i += 3;
+#endif
+
+#if (DEBUG_LVL>=2)
+			cout << text_cords[i].x << "," << text_cords[i].y << endl;
+			cout << text_cords[i + 1].x << "," << text_cords[i + 1].y << endl;
+			cout << text_cords[i + 2].x << "," << text_cords[i + 2].y << endl;
+			i += 3;
+#endif
+
+		}
+		else if (cmd == "usemtl")
+		{
+			string mtl;  in >> mtl;
+			texture_names.push_back(mtl);
+			switch_points.push_back(index);
+		}
+
+		in.ignore(1024, '\n');
+
+		in >> cmd;
+	}
+	switch_points.push_back(index);
 
 }
 

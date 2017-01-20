@@ -28,6 +28,15 @@ public:
 	
 	~DefaultDynamicObject(); 
 
+	// Inherited via Moveable
+	virtual void translate(glm::vec3 displacement) override;
+
+	virtual void translate(float x, float y, float z) override;
+	virtual void translateOn(float x, float y, float z, const Directions & _dir) override;
+
+	virtual void rotate(float x, float y, float z) override;
+	virtual void rotateAround(float x, float y, float z, const Directions & dir) override;
+
 
 };
 

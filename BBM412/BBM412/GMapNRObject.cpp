@@ -2,7 +2,7 @@
 
 
 
-GMapNRObject::GMapNRObject()
+GMapNRObject::GMapNRObject():GObject(glm::mat4{1.0})
 {
 }
 

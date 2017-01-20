@@ -9,16 +9,13 @@
 #include "glm\ext.hpp"
 
 class GBasicTextureObject:
-	public GObject
+	virtual public GObject
 {
 
 
 protected:
 
-	static GLuint program;
-	static GLuint uniform_index[3];
-
-	GLuint VAO, VBO;
+	GLuint vao, vbo;
 
 	Texture texture;
 	Texture defaultTexture;
@@ -30,20 +27,22 @@ protected:
 	//vector<glm::vec2> text_cords;
 	//vector<glm::vec3> normals;
 
-	glm::mat4 model;
+	//glm::mat4 model;
 
 	GLuint current_program;
 protected:
 
-	inline void initTexture(string path);
+	static Texture initTexture(const string & path);
 	
 	inline void defaultRender();
 	inline void wireframeRender();
 	inline void shadowCalculationRender();
+	inline void reflectionCalculationRender();
 
 	inline void defaultToggleRender(const glm::mat4 & model);
 	inline void wireframeToggleRender(const glm::mat4 & model);
 	inline void shadowCalculationToggleRender(const glm::mat4 & model);
+	inline void reflectionCalculationToggleRender(const glm::mat4 & model);
 
 
 public:
@@ -55,12 +54,13 @@ public:
 	GBasicTextureObject(const string & obj, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
 	GBasicTextureObject(const string & obj, const glm::vec3 & dis, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
 	GBasicTextureObject(const string & sub, const string & obj, const glm::vec3 & dis, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
-	GBasicTextureObject(const string & sub,const string & obj, const glm::mat4 & _model, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
 
 
-	GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
-	GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const glm::mat4 & _model, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
+	GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const Texture texture, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
+	GBasicTextureObject(const GLuint & _vbo, const GLuint & _vao, const unsigned int & _points_size, const Texture _texture, 
+		const glm::vec3 & displacement, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
 
+	static void construct(const string & sub, const string &obj, GLuint & vbo, GLuint & vao, unsigned int & points_size, Texture & texture);
 
 	virtual void render() override;
 	virtual void toggleRender(const glm::mat4 & model) override;

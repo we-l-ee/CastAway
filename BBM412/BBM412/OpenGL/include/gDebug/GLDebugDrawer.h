@@ -3,9 +3,6 @@
 
 #include "LinearMath/btIDebugDraw.h"
 
-#include "GLDebugFont.h"
-#include "GlutStuff.h"
-
 #include <stdio.h>
 using namespace std;
 
@@ -26,6 +23,9 @@ public:
 	}
 	static inline void pushMatrix(glm::mat4 mat) {
 		glUseProgram(0);
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 		glPushMatrix();
 		glMatrixMode(GL_MODELVIEW);
 		glLoadMatrixf(glm::value_ptr(mat));

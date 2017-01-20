@@ -4,7 +4,6 @@
 #include <iostream>
 
 
-GLuint GBasicTextureObject::program;
 
 
 void GBasicTextureObject::setTexture(Texture tex)
@@ -25,17 +24,33 @@ GBasicTextureObject::GBasicTextureObject(const string & obj, const glm::vec3 & d
 {
 }
 
-GBasicTextureObject::GBasicTextureObject(const string & sub, const string & obj, const glm::vec3 & dis, const GLuint & _prog ) : GBasicTextureObject(obj, obj, glm::translate(dis), _prog)
+GBasicTextureObject::GBasicTextureObject(const string & sub, const string & obj, const glm::vec3 & dis, const GLuint & _prog ) : 
+	GObject(glm::translate(dis)), current_program(_prog)
+{
+	construct(sub, obj, vbo, vao, points_size, texture);
+	defaultTexture = texture;
+
+#ifdef _DEBUG
+	throwError("GBasicTextureObject()[exit]:\n");
+#endif
+}
+
+
+GBasicTextureObject::GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const Texture texture, 
+	const GLuint & _prog ) :
+	GBasicTextureObject(vbo, vao, _points_size, texture, glm::vec3{ 0.0f },_prog)
 {
 }
 
-GBasicTextureObject::GBasicTextureObject(const string & sub,const string & obj, const glm::mat4 & _model, const GLuint & _prog ) :
-	model(_model) , current_program(_prog)
+GBasicTextureObject::GBasicTextureObject(const GLuint & _vbo, const GLuint & _vao, const unsigned int & _points_size, const Texture _texture, 
+	const glm::vec3 & displacement, const GLuint & _prog ) :
+	vbo(_vbo) , vao(_vao) , points_size(_points_size), texture(_texture), defaultTexture(_texture), GObject(glm::translate(displacement)) , current_program(_prog)
 {
-#ifdef _DEBUG
-	throwError("GBasicTextureObject()[enter]:\n");
-#endif
 
+}
+
+void GBasicTextureObject::construct(const string & sub, const string &obj, GLuint & vbo, GLuint & vao, unsigned int & points_size, Texture & texture)
+{
 	stringstream ss;
 
 	ss << "objects\\" << sub << "\\" << obj << ".obj";
@@ -44,56 +59,34 @@ GBasicTextureObject::GBasicTextureObject(const string & sub,const string & obj, 
 	ss << "texture\\" << sub << "\\" << obj << ".dds";
 	string text{ ss.str() };
 
-#if (DEBUG_LVL>=1)
-	std::cout << object << endl << text << endl;
-#endif
 
 	vector<glm::vec3> points;
 	vector<glm::vec2> text_cords;
-	vector<glm::vec3> normals;
 
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
 
 	readObjectFile(object, points, text_cords);
 	points_size = points.size();
 
-	initTexture(text);
+	texture = initTexture(text);
 
-	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &vbo);
 
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*points.size() +
-		sizeof(glm::vec2)*text_cords.size() + sizeof(glm::vec3)*normals.size(), NULL, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*points_size + sizeof(glm::vec2)*points_size, NULL, GL_STATIC_DRAW);
 
-	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3)*points.size(), &points[0]);
-	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*points.size(), sizeof(glm::vec2)*text_cords.size(), &text_cords[0]);
-
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3)*points_size, &points[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*points_size, sizeof(glm::vec2)*points_size, &text_cords[0]);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(glm::vec3)*points.size()));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(glm::vec3)*points_size));
 
 	glBindVertexArray(0);
-
-#ifdef _DEBUG
-	throwError("GBasicTextureObject()[exit]:\n");
-#endif
-}
-
-
-GBasicTextureObject::GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const GLuint & _prog ) :
-	GBasicTextureObject(vbo, vao, _points_size, glm::mat4{ 1.0f },_prog)
-{
-}
-
-GBasicTextureObject::GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const glm::mat4 & _model, const GLuint & _prog ) :
-	VBO(vbo) , VAO(vao) , points_size(_points_size) , model(_model) , current_program(_prog)
-{
-
 }
 
 
@@ -110,6 +103,9 @@ void GBasicTextureObject::render()
 		break;
 	case RenderMode::SHADOW_CALC:
 		shadowCalculationRender();
+		break;
+	case RenderMode::REFLECTION_CALC:
+		reflectionCalculationRender();
 		break;
 
 	}
@@ -145,19 +141,19 @@ void GBasicTextureObject::toggleRender(const glm::mat4 & model_matrix)
 inline void GBasicTextureObject::defaultRender()
 {
 	glUseProgram(current_program);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = GObject::camera->getViewProjMatrix()*GModel;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 
-	glActiveTexture(GL_TEXTURE0+ nextAvaibleTextureUnit);
+	glActiveTexture(GL_TEXTURE0 + nextAvaibleTextureUnit);
 	glBindTexture(texture.target, texture.tex_name);
-	glUniform1i(100, GL_TEXTURE0 + nextAvaibleTextureUnit);
+	glUniform1i(100,   nextAvaibleTextureUnit);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
@@ -165,33 +161,53 @@ inline void GBasicTextureObject::defaultRender()
 inline void GBasicTextureObject::wireframeRender()
 {
 	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = GObject::camera->getViewProjMatrix()*GModel;
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniform4fv(2, 1, &wireframeColor[0]);
+	glUniform4fv(1, 1, &wireframeColor[0]);
+	glDrawArrays(GL_LINES, 0, points_size);
 
-	glDrawArrays(GL_LINE_LOOP, 0, points_size);
 }
 
 inline void GBasicTextureObject::shadowCalculationRender()
 {
 	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = lightViewProj*GModel;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+
+	glDrawArrays(GL_TRIANGLES, 0, points_size);
+}
+
+inline void GBasicTextureObject::reflectionCalculationRender()
+{
+	glUseProgram(current_program);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glm::mat4 mvp;
+
+
+	mvp = GObject::camera->getViewProjMatrix()*GModel*reflectionMatrix;
+
+	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+
+	glActiveTexture(GL_TEXTURE0 + nextAvaibleTextureUnit);
+	glBindTexture(texture.target, texture.tex_name);
+	glUniform1i(100, nextAvaibleTextureUnit);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
@@ -199,9 +215,9 @@ inline void GBasicTextureObject::shadowCalculationRender()
 
 inline void GBasicTextureObject::defaultToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glUseProgram(current_program);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
@@ -214,7 +230,7 @@ inline void GBasicTextureObject::defaultToggleRender(const glm::mat4 & model)
 
 	glActiveTexture(GL_TEXTURE0 + nextAvaibleTextureUnit);
 	glBindTexture(texture.target, texture.tex_name);
-	glUniform1i(100, GL_TEXTURE0 + nextAvaibleTextureUnit);
+	glUniform1i(100, nextAvaibleTextureUnit);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
@@ -222,8 +238,8 @@ inline void GBasicTextureObject::defaultToggleRender(const glm::mat4 & model)
 inline void GBasicTextureObject::wireframeToggleRender(const glm::mat4 & model)
 {
 	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
@@ -232,49 +248,72 @@ inline void GBasicTextureObject::wireframeToggleRender(const glm::mat4 & model)
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniform4fv(2, 1, &wireframeColor[0]);
+	glUniform4fv(1, 1, &wireframeColor[0]);
+	glDrawArrays(GL_LINES, 0, points_size);
 
-	glDrawArrays(GL_LINE_LOOP, 0, points_size);
 }
 
 inline void GBasicTextureObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
 	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = lightViewProj*model;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
 
+inline void GBasicTextureObject::reflectionCalculationToggleRender(const glm::mat4 & model)
+{
+	glUseProgram(current_program);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-void GBasicTextureObject::initTexture(string path)
+	glm::mat4 mvp;
+
+
+	mvp = GObject::camera->getProjMatrix()*model*reflectionMatrix;
+
+	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+
+	glActiveTexture(GL_TEXTURE0 + nextAvaibleTextureUnit);
+	glBindTexture(texture.target, texture.tex_name);
+	glUniform1i(100, nextAvaibleTextureUnit);
+
+	glDrawArrays(GL_TRIANGLES, 0, points_size);
+}
+
+
+Texture GBasicTextureObject::initTexture(const string & path)
 {
 
-	texture = createTexture(path);
-	defaultTexture = texture;
+	Texture texture = createTexture(path);
 
 	glBindTexture(texture.target, texture.tex_name);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	glBindTexture(texture.target, 0);
 
 #ifdef _DEBUG	
 	throwError("GStaticObject::initTexture():\n");
 #endif
-
+	return texture;
 }
+
+
 
 
 GBasicTextureObject::~GBasicTextureObject()
@@ -285,19 +324,21 @@ GBasicTextureObject::~GBasicTextureObject()
 void GBasicTextureObject::debugRender()
 {
 	glUseProgram(current_program);
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
-	mvp = debug_viewProj*model;
+	mvp = debug_viewProj*GModel;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 
 	glActiveTexture(GL_TEXTURE0 + nextAvaibleTextureUnit);
 	glBindTexture(texture.target, texture.tex_name);
-	glUniform1i(100, GL_TEXTURE0 + nextAvaibleTextureUnit);
+	glUniform1i(100,  nextAvaibleTextureUnit);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
+
+	throwError("GDefaultSplatObject::debugRender():");
 }
 #endif

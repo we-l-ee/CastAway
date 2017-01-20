@@ -10,14 +10,57 @@ DefaultDynamicObject::DefaultDynamicObject(const string & obj, const glm::vec3 &
 }
 
 DefaultDynamicObject::DefaultDynamicObject(const string & obj, const glm::vec3 & dis, const glm::vec3 & _m_specular, const GLfloat & shininess):
-	GDynamicDefaultObject(obj, dis,_m_specular, shininess)
+	GObject(glm::translate(dis)), GDynamicDefaultObject(obj, dis,_m_specular, shininess)
 {
 	stringstream ss;
 	ss << "objects\\" << obj << "\\" << obj << ".bullet";
 
-	addRigidBody(ss.str(), dis);
+	pObject::rigidBody = addRigidBody(ss.str(), dis);
 
 }
+
+
+
+void DefaultDynamicObject::translate(glm::vec3 displacement)
+{
+	Moveable::translate(displacement);
+	GModel = calculateModelMatrix();
+	rigidBody->setWorldTransform(pObject::glm_btTransform(GModel));
+}
+
+void DefaultDynamicObject::translate(float x, float y, float z)
+{
+	Moveable::translate(x, y, z);
+	GModel = calculateModelMatrix();
+	rigidBody->setWorldTransform(pObject::glm_btTransform(GModel));
+
+}
+
+void DefaultDynamicObject::translateOn(float x, float y, float z, const Directions & _dir)
+{
+	Moveable::translateOn(x, y, z, _dir);
+	GModel = calculateModelMatrix();
+	rigidBody->setWorldTransform(pObject::glm_btTransform(GModel));
+}
+
+void DefaultDynamicObject::rotate(float x, float y, float z)
+{
+	Moveable::rotate(x, y, z);
+	GModel = calculateModelMatrix();
+	rigidBody->setWorldTransform(pObject::glm_btTransform(GModel));
+
+}
+
+void DefaultDynamicObject::rotateAround(float x, float y, float z, const Directions & dir)
+{
+	Moveable::rotateAround(x, y, z, dir);
+	GModel = calculateModelMatrix();
+	rigidBody->setWorldTransform(pObject::glm_btTransform(GModel));
+
+}
+
+
+
 
 DefaultDynamicObject::~DefaultDynamicObject()
 {

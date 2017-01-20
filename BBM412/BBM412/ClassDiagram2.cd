@@ -1,0 +1,445 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Log" Collapsed="true">
+    <Position X="17.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAEEAAAAAAAgAAIAAAAAABAAEBEA=</HashCode>
+      <FileName>Log.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PineTree" Collapsed="true">
+    <Position X="17.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABgAAAAAAAAAAAEEAAAAAAAAAAAEAAAAABAAEBEA=</HashCode>
+      <FileName>PineTree.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RedRock" Collapsed="true">
+    <Position X="14.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAACAEEQAABAAAAAEAAAAAAARAAEBEA=</HashCode>
+      <FileName>RedRock.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Camera" Collapsed="true">
+    <Position X="20" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAkCIhABQ2GAAAEAQiMIIgAhAgFIAkCkQABBAABAIQg=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameObject" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QBAgAAIAAgAAAAAAAAGAAQAAAAAgAAAAAAAQAAIAAIA=</HashCode>
+      <FileName>GameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Moveable" Collapsed="true">
+    <Position X="10.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEESIAAAACAACQIAAoAAAAEEAEAQABAIAARAA=</HashCode>
+      <FileName>Moveable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GBasicLightObject" Collapsed="true">
+    <Position X="19.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAEAAAAAAAAACAABAAAAAAAAAAE=</HashCode>
+      <FileName>GBasicLightObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GBasicTextureLightObject" Collapsed="true">
+    <Position X="24.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAAAAAAAAAEAAAAAAAAAAAAAAAAIAAAAAAE=</HashCode>
+      <FileName>GBasicTextureLightObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GDefaultMultiTextureObject" Collapsed="true">
+    <Position X="17.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAABBY6CBEQAAFABAAEQBCAAEAAAUAQACACAAABQAAM=</HashCode>
+      <FileName>GDefaultMultiTextureObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GBasicObject" Collapsed="true">
+    <Position X="19.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAAABIgCBAQAAEABAIAQBCAAAAAAEASAAAAAAAAQAAI=</HashCode>
+      <FileName>GBasicObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GBasicTextureObject" Collapsed="true">
+    <Position X="24.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>lEAAAYgCBAQAAEABAIAQBCAAAAAAFgQgAAAAAAAQAAI=</HashCode>
+      <FileName>GBasicTextureObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GMapAObject" Collapsed="true">
+    <Position X="26.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAEABAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>GMapAObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GMapNAObject" Collapsed="true">
+    <Position X="35" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GMapNAObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GMapNRObject" Collapsed="true">
+    <Position X="1.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GMapNRObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GMapNSObject" Collapsed="true">
+    <Position X="1" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GMapNSObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GMapRObject" Collapsed="true">
+    <Position X="15.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hIABAI4CAAQAAEABAJEQBKAAAAAAEgQAAACAAAAQAAM=</HashCode>
+      <FileName>GMapRObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GObject" Collapsed="true">
+    <Position X="1.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>lEIAohoQIAggAAAEkAHgAKAAGIBIUBBBQADBFIAwADI=</HashCode>
+      <FileName>GObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GDefaultSplatObject" Collapsed="true">
+    <Position X="22" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAABAw4CBEQAQAABAAEQBSAAAAAAEAQEAADAAAAUAAM=</HashCode>
+      <FileName>GDefaultSplatObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GDefaultObject" Collapsed="true">
+    <Position X="26.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAABCY4CBAQAAEABAIEQBSAAAAAAFgQgAADAAAAQAAM=</HashCode>
+      <FileName>GDefaultObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GTiledTextureObject" Collapsed="true">
+    <Position X="8.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAABAYgCBAQAAEABAIAQBCAAAAgQFgQgAAAAAAAQAAc=</HashCode>
+      <FileName>GTiledTextureObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pKinematicObject" Collapsed="true">
+    <Position X="36.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAEAAAAA=</HashCode>
+      <FileName>pKinematicObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pObject" Collapsed="true">
+    <Position X="7" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAIEwAAAAABgAAEBAECQAAAAAAAQEAAAAAAAIAAAgA=</HashCode>
+      <FileName>pObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pStaticObject" Collapsed="true">
+    <Position X="29" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>pStaticObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pDynamicObject" Collapsed="true">
+    <Position X="32.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAgAAAAAAAABA=</HashCode>
+      <FileName>pDynamicObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GDynamicDefaultObject" Collapsed="true">
+    <Position X="29.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAACIAAQAAAAAAAAEAAAAAAAAAAABAA=</HashCode>
+      <FileName>GDynamicDefaultObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DirecLight" Collapsed="true">
+    <Position X="4.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAACUgQAAAAAABAAQAgAAAAIAAAAAAAgAAAAIIAAA=</HashCode>
+      <FileName>DirecLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GDirecLight" Collapsed="true">
+    <Position X="9.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACAAAQAAAAAAAAEAAEAAAAAACABAA=</HashCode>
+      <FileName>GDirecLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GPointLight" Collapsed="true">
+    <Position X="12" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAABAAAAAAAACAAAQAAAAAAAAEAAAAAAAAAAABAA=</HashCode>
+      <FileName>GPointLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GSpotLight" Collapsed="true">
+    <Position X="12" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAgACAAAQAAAAAAAAEAAAAAAAAAAABAA=</HashCode>
+      <FileName>GSpotLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Light" Collapsed="true">
+    <Position X="4.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gCAAAA0AAAAAAACACAAAAxCQAAABAAEAAEAAIAIICAA=</HashCode>
+      <FileName>Light.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PointLight" Collapsed="true">
+    <Position X="4.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAUgAAAAABABACQAAAAAAAAACAAgAAAAIAIIAAA=</HashCode>
+      <FileName>PointLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SpotLight" Collapsed="true">
+    <Position X="4.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BCAAAAUgAARAAAABAAQAAAAAAABAAAAAAAAAAAIIAAA=</HashCode>
+      <FileName>SpotLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DefaultDynamicObject" Collapsed="true">
+    <Position X="29.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAACAAAQAAAACAAAEAAAAAIAAAAABAA=</HashCode>
+      <FileName>DefaultDynamicObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DefaultStaticObject" Collapsed="true">
+    <Position X="26.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>DefaultStaticObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Fern" Collapsed="true">
+    <Position X="26.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQIBgCAAAAAABAAAAEABAAAAAAAAgAAAAAAAAAEAAA=</HashCode>
+      <FileName>Fern.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FlashLight" Collapsed="true">
+    <Position X="12" Y="11.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BCAAgAUAAAACAgACAAIQACAAAAIQVAAAAACgAAAyBAA=</HashCode>
+      <FileName>FlashLight.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GreyRock" Collapsed="true">
+    <Position X="14.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAACAEEQAAAAAAAAEgBAAAAABAAEBEA=</HashCode>
+      <FileName>GreyRock.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapleTree" Collapsed="true">
+    <Position X="20.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAEEAAAAAAAAABAABAAAABAAEBEA=</HashCode>
+      <FileName>MapleTree.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Moon" Collapsed="true">
+    <Position X="14.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAoQAAAEAAAAAAAEAACAIAAAAAAAAAEAABACUgAA=</HashCode>
+      <FileName>Moon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Seon" Collapsed="true">
+    <Position X="12" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgCAAAAAAAAiAAEQBAAQAAAAEAAAAAAAAAAEBAA=</HashCode>
+      <FileName>Seon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sky" Collapsed="true">
+    <Position X="8.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAIAAAAAAEAAAEAAAAAAAAAAAAAEAAABCAUAAA=</HashCode>
+      <FileName>Sky.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StaticDefaultSplatObject" Collapsed="true">
+    <Position X="22" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>StaticDefaultSplatObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Sun" Collapsed="true">
+    <Position X="9.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAAAAowCAAQAAAABCAEAAAAAAAAAAAQAAAAABAAUgAQ=</HashCode>
+      <FileName>Sun.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="pPerson" Collapsed="true">
+    <Position X="20" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QABKABgAQACAAAAQgCIAAgQCAgCoCAA0QAEhAEEAACA=</HashCode>
+      <FileName>pPerson.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Console" Collapsed="true">
+    <Position X="35" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Console.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game" Collapsed="true">
+    <Position X="36.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAEiAAgEEKAIAAAAAAABAAAAyAAAAJAAAAgAACAQA=</HashCode>
+      <FileName>Game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World" Collapsed="true">
+    <Position X="38.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QEUAhPBAABBI3UZMgkAkAYE0AQaDiiIBCEEQQAGxCBE=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GException" Collapsed="true">
+    <Position X="38.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACACAAAAAAAA=</HashCode>
+      <FileName>GExceptions.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Directions" Collapsed="true">
+    <Position X="36.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABACAAAAAAAI=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Mesh" Collapsed="true">
+    <Position X="38.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAABAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Texture" Collapsed="true">
+    <Position X="35" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="StrengthData" Collapsed="true">
+    <Position X="38.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAwAAAAAACAAAAAAAAAAAAIAAAAAQAAAAAAAAABAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DirecLightData" Collapsed="true">
+    <Position X="35" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAIAAAAAAAAAIAAAAAAACAAAAAAABAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="PointLightData" Collapsed="true">
+    <Position X="35" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAIAAAAAAAIAIAAAAAAACAAAAIQCBAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SpotLightData" Collapsed="true">
+    <Position X="36.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAABAAAAAAAAIAAAAAAAIAIAgAAAAACAAAAIACBAEAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="RenderMode" Collapsed="true">
+    <Position X="38.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAIgAAAAECAAAAAAAAAAAAgA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Tools" Collapsed="true">
+    <Position X="36.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAEABAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Options" Collapsed="true">
+    <Position X="36.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAEEAAEIAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CameraMovement" Collapsed="true">
+    <Position X="35" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAkAQAAAAAAgAACICUAAgAIAAAAABAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CameraMode" Collapsed="true">
+    <Position X="38.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAQAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Speed" Collapsed="true">
+    <Position X="35" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>stddef.hpp</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BUTTON_STATES" Collapsed="true">
+    <Position X="36.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABEEAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="__unnamed_enum_0396_1" Collapsed="true">
+    <Position X="35" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAQQABAAAAAAAAAAAAAAAAABAAAAgAAAAA=</HashCode>
+      <FileName>World.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

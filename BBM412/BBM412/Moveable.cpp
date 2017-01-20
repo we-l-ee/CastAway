@@ -123,7 +123,8 @@ void Moveable::rollAround(float angle, const glm::vec3 & vector)
 
 Moveable::Moveable(const glm::vec3 & _pos)
 {
-	
+	std::cout << "Translation:" << _pos << std::endl;
+
 	position = _pos;
 	translation = glm::translate(position);
 
@@ -162,8 +163,10 @@ void Moveable::reset(const glm::mat4 & trans, const glm::mat4 & rot)
 
 	this->quat = glm::normalize(glm::toQuat(rot));
 
-	translation = trans;	//glm::translate(this->position);
-	rotation = rot;			//glm::mat4_cast(this->quat);
+	translation = //trans;	
+	glm::translate(this->position);
+	rotation = //rot;			
+	glm::mat4_cast(this->quat);
 
 }
 

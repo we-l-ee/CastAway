@@ -6,15 +6,52 @@
 
 World::World(unsigned int screen_width, unsigned int screen_height) :
 	SCREEN_WIDTH(screen_width), SCREEN_HEIGHT(screen_height),
-	player(new pPerson{ dynamicsWorld, glm::vec3{ -10.0,100,-30.0 } }),
-	sun(new Sun())
+	player(new pPerson{ dynamicsWorld, glm::vec3{ 50,50,50 } })
 {
+	glGenFramebuffers(1, &reflectionFBO);
+	glGenTextures(1, &reflectionTexture);
+	glBindFramebuffer(GL_FRAMEBUFFER, reflectionFBO);
+
+
+		glBindTexture(GL_TEXTURE_2D, reflectionTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, reflectionTexture, 0);
+
+
+	GLuint rboDepth;
+	glGenRenderbuffers(1, &rboDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	GLuint attachments[1] = { GL_COLOR_ATTACHMENT0};
+	glDrawBuffers(1, attachments);
+
+	GObject::setReflectionMatrix(glm::scale(glm::vec3{ 1.0f,-1.0f,1.0f })
+		//*glm::translate( glm::vec3{0,-20,0} )
+	);
+#ifdef _DEBUG
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		throw GException("Framebuffer reflection one not complete!");
+	GObject::throwError("World():\n");
+#endif
+	//
+	//
+	//
 	initializePostProcessings();
 
 	initializeAll();
+
 	createObjects();
 
-	picked_obj = static_pointer_cast<Moveable>(spot_lights[0]);
+
+	GObject::setAvaibleTextureUnit(3);
+
+	pickedRigidBody = static_cast<Moveable*>( point_lights.back().get() );
 
 	player->calculateState();
 
@@ -22,24 +59,46 @@ World::World(unsigned int screen_width, unsigned int screen_height) :
 	gDebug = new GLDebugDrawer();
 	gDebug->setDebugMode(1);
 	dynamicsWorld->setDebugDrawer(gDebug);
+	debug_program = GObject::createProgram("shaders\\world\\renderscene.vert.glsl", "shaders\\world\\renderscene.frag.glsl");
 #endif
 
 	//glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_DEPTH_TEST);
+
+	glAlphaFunc(GL_GEQUAL, 1.0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_BLEND);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
 
-#ifdef _DEBUG
-	GObject::throwError("World():\n");
-#endif
 }
 
 inline void World::initializeAll()
 {
 	GameObject::initialize(player);
 	GObject::initialize(&point_lights, &direc_lights, &spot_lights);
+
 	GBasicLightObject::initialize();
+	GBasicTextureLightObject::initialize();
+	GTiledTextureObject::intialize();
 
 	GDefaultObject::initialize();
+	GDefaultSplatObject::initialize();
+	GMapAObject::initialize();
+	GMapRObject::initialize();
+
+	GDefaultMultiTextureObject::initialize();
+
+	Sky::initialize();
+	Moon::initialize();
+	Sun::initialize();
+
+	MapleTree::initialize();
+	PineTree::initialize();
+	Fern::initialize();
+	Log::initialize();
+	GreyRock::initialize();
+	RedRock::initialize();
 
 	Seon::initialize();
 
@@ -63,40 +122,62 @@ inline void World::initializeAll()
 
 inline void World::createObjects()
 {
-	static_objects.emplace_back(new DefaultStaticObject("terrain"));
-	objects.push_back(static_pointer_cast<GObject>(static_objects.back()));
+	objects.emplace_back(new Sky(glm::vec3{ 0,-40,0 }));
+	//ocean.reset(new GMapRObject("ocean"));	ocean->setReflectionTexture(Texture{ GL_TEXTURE_2D, reflectionTexture });
+	//objects.push_back(ocean);
 
-	objects.emplace_back(new GBasicTextureObject("sky"));
+	sun = shared_ptr<Sun>(new Sun());
+	sun->shadowMappingInitialize(4096, 4096);
 
-	static_objects.emplace_back(new DefaultStaticObject("rock", glm::vec3{ 5,5,5 }));
-	objects.push_back(static_pointer_cast<GObject>(static_objects.back()));
+	objects.emplace_back(new Moon());
 
-	dynamic_objects.emplace_back(new DefaultDynamicObject("rock"));
-	objects.push_back(static_pointer_cast<GObject>(dynamic_objects.back()));
 
-	direc_lights.push_back(sun);
-	objects.push_back(sun);
-	lights.push_back(sun);
+	direc_lights.push_back(static_pointer_cast<DirecLight>(sun));
+	objects.push_back(static_pointer_cast<GObject>(sun));
+	lights.push_back(static_pointer_cast<Light>(sun));
 
-#ifdef _DEBUG
-	GObject::throwError("World::createObjects()2:\n");
-#endif
+	//static_objects.emplace_back(new StaticDefaultSplatObject("terrain"));
+	objects.emplace_back(new StaticDefaultSplatObject("terrain"
+		//, glm::vec3{ 0,20,0 }
+	));
 
-	point_lights.emplace_back(new Seon(glm::vec3{ 5.0f,5.0f,5.0f }, glm::vec3{ 1.0f }));
+	
+
+	objects.emplace_back(new Log(glm::vec3{ 40, heightOf(40, -20) ,-20 }, glm::vec3{ 2.0f }));
+
+	objects.emplace_back(	new GMapAObject("fern", glm::vec3{ 50, heightOf(50, 50) ,50 } )		);
+	objects.emplace_back(	new Fern(glm::vec3{ 55, heightOf(55, 50) ,50 }, glm::vec3{ 3.0f }));
+	objects.emplace_back(	new Fern(glm::vec3{ 20, heightOf(20, -40) ,-40 }, glm::vec3{ 6.8f }));
+	objects.emplace_back(	new Fern(glm::vec3{ 22, heightOf(22, 41) ,41 }, glm::vec3{ 6.0f }));
+
+	objects.emplace_back(	new DefaultStaticObject("rock", glm::vec3{ 5, heightOf(5, 5) ,5 })		);
+	//objects.emplace_back(	new DefaultStaticObject("oaktree", glm::vec3{ -4, heightOf(-4, 30) ,30 }));
+	//objects.emplace_back(	new GDefaultMultiTextureObject("maple", glm::vec3{ -4, heightOf(-4, 30) ,30 }));
+	objects.emplace_back(new MapleTree(glm::vec3{ -4, heightOf(-4, 30) ,30 }, glm::vec3{ 2.0f }));
+	objects.emplace_back(new PineTree(glm::vec3{ -23, heightOf(-23, -33) ,-33 }, glm::vec3{ 2.0f }));
+	objects.emplace_back(new GreyRock(glm::vec3{ 26, heightOf(26, 29) ,29 }));
+	objects.emplace_back(new RedRock(glm::vec3{ 32, heightOf(32, 20) ,20 }));
+
+
+
+	shared_ptr<Moon> moon = shared_ptr<Moon>(new Moon());
+
+	direc_lights.push_back(static_pointer_cast<DirecLight>(moon));
+	objects.push_back(static_pointer_cast<GObject>(moon));
+	lights.push_back(static_pointer_cast<Light>(moon));
+
+	point_lights.emplace_back(new Seon(glm::vec3{ 5.0f,25.0f,5.0f }, glm::vec3{ 1.0f }));
 	objects.push_back(dynamic_pointer_cast<GObject>(point_lights.back()));
 	lights.push_back(dynamic_pointer_cast<Light>(point_lights.back()));
 
 
-#ifdef _DEBUG
-	GObject::throwError("World::createObjects()1:\n");
-#endif
 
-	spot_lights.emplace_back(
-		new FlashLight("flashlight", glm::vec3{ 5,0,0 })
-	);
-	objects.push_back(dynamic_pointer_cast<GObject>(spot_lights.back()));
-	flashLight = dynamic_pointer_cast<FlashLight>(spot_lights.back());
-	lights.push_back(dynamic_pointer_cast<Light>(spot_lights.back()));
+	flashLight = shared_ptr<FlashLight>(new FlashLight("flashlight", glm::vec3{ 50,20,50 }));
+	flashLight->shadowMappingInitialize(1024, 1024);
+
+	spot_lights.push_back(static_pointer_cast<SpotLight>(flashLight));
+	objects.push_back(static_pointer_cast<GObject>(flashLight));
+	lights.push_back(static_pointer_cast<Light>(flashLight));
 
 #ifdef _DEBUG
 	GObject::throwError("World::createObjects():\n");
@@ -105,8 +186,8 @@ inline void World::createObjects()
 
 inline GLfloat World::heightOf(GLfloat x, GLfloat z)
 {
-	btVector3 start(x, 200.0, z);
-	btVector3 end = start + btVector3(0,-1,0)*200;
+	btVector3 start(x, 300, z);
+	btVector3 end = start + btVector3(0,-1,0)*350;
 	btCollisionWorld::ClosestRayResultCallback RayCallback(start, end);
 	dynamicsWorld->rayTest(start, end, RayCallback);
 
@@ -124,31 +205,36 @@ inline void World::initializePostProcessings()
 	glGenFramebuffers(POST_SIZE, fbo);
 	glGenTextures(POST_SIZE, texture);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[FINAL]);
+
 	for (GLuint i = HDR_0; i <= HDR_1; i++)
 	{
 		glBindTexture(GL_TEXTURE_2D, texture[i]);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  // We clamp to the edge as the blur filter would otherwise sample repeated texture values!
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		// attach texture to framebuffer
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, texture[i], 0);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i - HDR_0, GL_TEXTURE_2D, texture[i], 0);
 	}
+
 	GLuint rboDepth;
 	glGenRenderbuffers(1, &rboDepth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	GLuint attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
+
 #ifdef _DEBUG
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "Framebuffer not complete!" << std::endl;
+		throw GException("Framebuffer FINAL one not complete!");
 #endif
 
-	for (GLuint i = BLUR_VER; i <= BLUR_HOR; i++)
+	for (GLuint i = BLUR_HOR; i <= BLUR_VER; i++)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo[i]);
-		glBindTexture(GL_TEXTURE_2D, fbo[i]);
+		glBindTexture(GL_TEXTURE_2D, texture[i]);
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, GL_RGB16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL
 		);
@@ -157,11 +243,13 @@ inline void World::initializePostProcessings()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glFramebufferTexture2D(
-			GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo[i], 0
+			GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture[i], 0
 		);
 #ifdef _DEBUG
+		GLuint attachments[1] = { GL_COLOR_ATTACHMENT0};
+		glDrawBuffers(1, attachments);
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			std::cout << "Framebuffer not complete!" << std::endl;
+			throw GException("Framebuffer BLUR one not complete!");
 #endif
 	}
 
@@ -198,37 +286,49 @@ void World::blurScene()
 {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[BLUR_HOR]);
-	// bind texture of other framebuffer (or scene if first iteration)
+	// Blur it horozantily
 	glUseProgram(program[BLUR_HOR]);
 
 	glActiveTexture(GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
 	glBindTexture( GL_TEXTURE_2D, texture[HDR_1] );
-	glUniform1i(100, GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
+	glUniform1i(100, GObject::getAvaibleTextureUnit());
 	renderScene();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo[BLUR_VER]);
-	// bind texture of other framebuffer (or scene if first iteration)
-	glUseProgram(program[BLUR_HOR]);
+	// Blur it vertically
+	glUseProgram(program[BLUR_VER]);
 
 	glActiveTexture(GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
 	glBindTexture(GL_TEXTURE_2D, texture[BLUR_HOR]);
-	glUniform1i(100, GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
+	glUniform1i(100, GObject::getAvaibleTextureUnit());
 	renderScene();
 
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+#ifdef _DEBUG
+	GObject::throwError("World::blurScene():\n");
+#endif // _DEBUG
 }
 
 inline void World::finalRender()
 {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 	glUseProgram(program[FINAL]);
 	glActiveTexture(GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
 	glBindTexture(GL_TEXTURE_2D, texture[HDR_0]);
-	glUniform1i(100, GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
+	glUniform1i(100, GObject::getAvaibleTextureUnit());
 
-	glActiveTexture(GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
+	glActiveTexture(GL_TEXTURE0 + GObject::getAvaibleTextureUnit() +1);
 	glBindTexture(GL_TEXTURE_2D, texture[BLUR_VER]);
-	glUniform1i(101, GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
+	glUniform1i(101, GObject::getAvaibleTextureUnit()+1);
 	renderScene();
+#ifdef _DEBUG
+	GObject::throwError("World::finalRender():\n");
+#endif // _DEBUG
+
 }
 
 void World::renderScene()
@@ -244,30 +344,65 @@ void World::renderScene()
 
 }
 
+inline void World::bloomRender()
+{
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo[FINAL]);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	allRender();
+
+	blurScene();
+
+	//debugRenderScene(texture[HDR_0]);
+
+	finalRender();
+}
+
 inline void World::shadowRender()
 {
+	glPolygonOffset(0.5, 0.1);
+
 	GObject::setRenderMode(RenderMode::SHADOW_CALC);
-	shadowRender((Light*)&sun);
-	GObject::setRenderMode(RenderMode::DEFAULT);
+	shadowRender((Light*)sun.get(),0);
+	GObject::setSunViewMatrix(sun->getLightViewMatrix(), sun->getLightProjMatrix());
+
+	glPolygonOffset(0.3, 0.0);
+
+	flashLight->setNoRender( true );
+	shadowRender((Light*)flashLight.get(), 1);
+	GObject::setSpotlightViewMatrix(flashLight->getLightViewMatrix(), flashLight->getLightProjMatrix());
+	flashLight->setNoRender(false);
+
+
+	GObject::setRenderMode(renderMode);
 
 }
 
-inline void World::shadowRender( Light * light )
+inline void World::reflectionRender()
+{
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, reflectionFBO);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	GObject::setRenderMode(RenderMode::REFLECTION_CALC);
+	allRender();
+	GObject::setRenderMode(renderMode);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+inline void World::shadowRender(Light * light, unsigned int unit)
 {
 	light->startMapping();
-	GObject::setLightViewMatrix( light->getLightViewMatrix(), light->getLightProjMatrix() );
+	GObject::setLightViewMatrix(light->getLightViewMatrix(), light->getLightProjMatrix());
 	allRender();
-	light->finishMapping(0);
+	light->finishMapping(unit);
 }
+
 
 inline void World::allRender()
 {
 	try {
 
-		for (auto o : objects)
-		{
-			o->render();
-		}
 #ifdef _DEBUG
 		if (debugDrawOn)
 		{
@@ -280,6 +415,12 @@ inline void World::allRender()
 		}
 #endif
 
+		for (auto o : objects)
+		{
+ 			o->render();
+		}
+
+
 	}
 	catch (GException e) {
 		cerr << "World::render():\n" << e.what() << endl;
@@ -290,7 +431,7 @@ inline void World::stepSimulation(const double & deltaTime)
 {
 	GameObject::stepSimulation(deltaTime);
 	player->stepSimulation(deltaTime);
-	//dynamicsWorld->stepSimulation(deltaTime);
+	dynamicsWorld->stepSimulation(deltaTime);
 
 	player->calculateViewMatrix();
 	calculateButtonsStates(deltaTime);
@@ -298,53 +439,97 @@ inline void World::stepSimulation(const double & deltaTime)
 
 	GObject::setLights();
 
-	shadowRender();
 }
 
 
 
 void World::render(const double & deltaTime)
 {
-
-	GObject::throwError("World::render()[enter]:\n");
+#ifdef _DEBUG
+	try {
+#endif
+		if(GameObject::isDay())	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+		else glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		stepSimulation(deltaTime);
 
 #ifdef _DEBUG
-	//cout << "World:render():\n" << endl;
-	//gDebug->drawTriangle(btVector3(-100, -5, 5), btVector3(0, 100, 5), btVector3(100, -100, 5), btVector3(1, 0, 0), btScalar(1));
+	}
+	catch (GException e)
+	{
+		cout << e.what() << endl;
+	}
+	static double timepast = 0;
+	timepast += deltaTime;
+	if (timepast >= 0.7) {		cout << player->getPosition() << endl; timepast = 0;	}
 
+if (debugRenderOn)
+{
+	/*flashLight->setNoRender(true);
+
+	calculateDebugView();
+	for (auto o : objects)
+		o->debugRender();
+
+	flashLight->setNoRender(false);*/
+
+
+
+}
+else 
+{
 #endif
-	glClearColor(0.0f, 0.0f, 0.8f, 1.0f);
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	stepSimulation(deltaTime);
+	//reflectionRender();
+	shadowRender();
+	bloomRender();
 
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo[FINAL]);
-	allRender();
-
-	blurScene();
-
-	finalRender();
-
-
+#ifdef _DEBUG
+}
+try {
+	GObject::throwError("World::render()[exit]:\n");
+}
+catch (GException e)
+{
+	cout << e.what() << endl;
+}
+#endif
 }
 
 
 void World::processMouseOffsets(double xOffset, double yOffset)
 {
-	if (picked_obj != NULL)
+	switch (tool)
 	{
-		if (buttonStateRight == RELEASE)
+	case Tools::Pick:
+		if (pickedRigidBody != NULL)
 		{
-			picked_obj->translateOn(xOffset*0.05, 0, yOffset*0.05, player->getDirections() );
-			
+			if (buttonStateRight == RELEASE)
+			{
+				pickedRigidBody->translateOn(xOffset*0.05, 0, yOffset*0.05, player->getDirections());
+
+			}
+			else
+			{
+				double x = xOffset*0.1;	double y = yOffset*0.1;
+				pickedRigidBody->rotateAround(y, x, 0.0, player->getDirections());
+
+			}
 		}
-		else
-		{		
-			double x = xOffset*0.1;	double y = yOffset*0.1;
-			picked_obj->rotateAround( y, x, 0.0, player->getDirections()	);
+		break;
+	case Tools::Toggle:
+		break;
+	case Tools::Seon:
+		if (pickedRigidBody != NULL && buttonStateLeft == TOGGLE)
+		{
+			pickedRigidBody->translateOn(xOffset*0.05, 0, yOffset*0.05, player->getDirections());
 
 		}
+		break;
+	case Tools::LightPick:
+		break;
 	}
+
 
 	player->processMouseMovement(xOffset, yOffset);
 
@@ -352,11 +537,18 @@ void World::processMouseOffsets(double xOffset, double yOffset)
 
 void World::processScrollOffsets(double xOffset, double yOffset)
 {
-	if ( picked_obj != NULL  )
+	if ( pickedRigidBody != NULL  )
 	{
 		double y = yOffset;
-		picked_obj->translateOn(0, y, 0, player->getDirections() );
+		pickedRigidBody->translateOn(0, y, 0, player->getDirections() );
 
+	}
+	if (pickedLight != NULL)
+	{
+		if (yOffset < 0)
+			pickedLight->decreaseLightStrength();
+		else if (yOffset > 0)
+			pickedLight->increaseLightStrength();
 	}
 }
 
@@ -367,13 +559,16 @@ inline void World::resetTools(Tools last, Tools current)
 		switch (last)
 		{
 		case Tools::Pick: 
-			picked_obj.reset();
+			pickedRigidBody = nullptr;
 			break;
 		case Tools::Seon:
-
+			
 			break;
 		case Tools::Toggle:
 			toggled_objs.clear();
+			break;
+		case Tools::LightPick:
+			pickedLight = nullptr;
 			break;
 		}
 	}
@@ -384,48 +579,105 @@ inline void World::toggle()
 	if (buttonStateLeft == PRESS)
 	{
 		btVector3 start, end;
-		player->getForwardRay(40, start, end);
+		player->getForwardXYZRay(40, start, end);
 		btCollisionWorld::ClosestRayResultCallback RayCallback(start, end);
 		dynamicsWorld->rayTest(start, end, RayCallback);
 
 		pObject * obj = pObject::getpObject(RayCallback.m_collisionObject);
-		cout << obj << typeid(*obj).name() << endl;
 		Moveable * mov = dynamic_cast< Moveable* >(obj);
-		bool add = true;
-		for (unsigned int i = 0; i < toggled_objs.size(); i++)
+		if (mov != nullptr)
 		{
-			if (toggled_objs[i].get() == mov)
-			{
-				add = false;
-				break;
-			}
-		}
-		if (add)
-		{
-			toggled_objs.emplace_back(mov);
-		}
 
+			bool add = true;
+			for (unsigned int i = 0; i < toggled_objs.size(); i++)
+			{
+				if ( toggled_objs[i] == mov )
+				{
+					add = false;
+					break;
+				}
+			}
+			if (add)
+			{
+			#ifdef _DEBUG
+				if (obj != nullptr) cout << obj << typeid(*obj).name() << endl; else cout << "Toggle raycast hit nothing" << endl;
+			#endif
+				toggled_objs.emplace_back(mov);
+			}
+
+		}
 	}
 	if (buttonStateRight == PRESS)
 	{
 		btVector3 start, end;
-		player->getForwardRay(40, start, end);
+		player->getForwardXYZRay(40, start, end);
 		btCollisionWorld::ClosestRayResultCallback RayCallback(start, end);
 		dynamicsWorld->rayTest(start, end, RayCallback);
 
 		const pObject * obj = pObject::getpObject(RayCallback.m_collisionObject);
-		cout << obj << typeid(*obj).name() << endl;
 		const Moveable * mov = dynamic_cast<const Moveable*>(obj);
-
-		for (unsigned int i = 0; i < toggled_objs.size(); i++)
+#if(DEBUG_LVL>1)
+		if (obj != nullptr) cout << obj << typeid(*obj).name() << endl; else cout << "No Hit" << endl;
+#endif
+		if (mov != nullptr)
 		{
-			if (toggled_objs[i].get() == mov)
+
+			for (unsigned int i = 0; i < toggled_objs.size(); i++)
 			{
-				toggled_objs.erase(toggled_objs.begin(), toggled_objs.begin() + i);
-				break;
+				if ( toggled_objs[i] == mov)
+				{
+					toggled_objs.erase( toggled_objs.begin() + i );
+					break;
+				}
 			}
 		}
 	}
+}
+
+inline void World::seon()
+{
+	if (buttonStateRight != RELEASE)
+		return;
+
+	switch (buttonStateLeft)
+	{
+	case PRESS:
+	if(point_lights.size() < 10)
+	{
+		glm::vec3 position = player->getPosition() + player->getForwardDirection() * 10;
+
+		//cout << "Player position:" << position << endl;
+
+		point_lights.emplace_back(new Seon( position, glm::vec3{ 1.0f }));
+		objects.push_back(dynamic_pointer_cast<GObject>(point_lights.back()));
+		lights.push_back(dynamic_pointer_cast<Light>(point_lights.back()));
+
+		//cout << "new seon" << endl;
+		pickedRigidBody = dynamic_cast<Moveable*>( point_lights.back().get() );
+	}
+		break;
+	case RELEASE:
+		pickedRigidBody = nullptr;
+		break;
+	}
+	switch (buttonStateRight)
+	{
+	case PRESS:
+	{
+		btVector3 start, end;
+		player->getForwardXYZRay(40, start, end);
+		btCollisionWorld::ClosestRayResultCallback RayCallback(start, end);
+		dynamicsWorld->rayTest(start, end, RayCallback);
+
+		pObject * obj = pObject::getpObject(RayCallback.m_collisionObject);
+
+
+		//cout << "new seon" << endl;
+		Seon * seon = dynamic_cast<Seon*>(obj);
+	}
+
+	}
+
 }
 
 inline void World::pick()
@@ -435,24 +687,54 @@ inline void World::pick()
 	case PRESS:
 	{
 		btVector3 start, end;
-		player->getForwardRay(40, start, end);
+		player->getForwardXYZRay(40, start, end);
 		btCollisionWorld::ClosestRayResultCallback RayCallback(start, end);
 		dynamicsWorld->rayTest(start, end, RayCallback);
 
 		pObject * obj = pObject::getpObject(RayCallback.m_collisionObject);
-		cout << obj << typeid(*obj).name() << endl;
 		Moveable * mov = dynamic_cast< Moveable* >(obj);
+#ifdef _DEBUG
+		if (obj != nullptr)cout << obj <<"||"<< typeid(*obj).name() << endl; else cout << "Raycast hit nothing" << endl;
+		if (mov != nullptr)cout << "Object is moveable, it`s picked" << "||" << typeid(*obj).name() << endl; else cout << "Object is not moveable." << endl;
+#endif
 		if (mov != nullptr)
 		{
-			picked_obj.reset( mov );
+
+			pickedRigidBody =  mov ;
 		}
 	}
 		break;
-	case TOGGLE:
-		break;
 	case RELEASE:
-		picked_obj.reset();
+		pickedRigidBody = nullptr;
 		break;
+	}
+}
+
+inline void World::lightPick()
+{
+	if (buttonStateLeft == PRESS)
+	{
+		btVector3 start, end;
+		player->getForwardXYZRay(40, start, end);
+		btCollisionWorld::ClosestRayResultCallback RayCallback(start, end);
+		dynamicsWorld->rayTest(start, end, RayCallback);
+
+		pObject * obj = pObject::getpObject(RayCallback.m_collisionObject);
+
+#if (DEBUG_LVL>=1)
+		if (obj != nullptr)cout << obj << typeid(*obj).name() << " || HashCode:" << typeid(*obj).hash_code() << endl; else cout << "Light raycast Raycast hit nothing" << endl;
+#endif
+		Light * light = dynamic_cast< Light* >(obj);
+
+		if (light != nullptr)
+		{
+			pickedLight = light;
+		}
+	}
+	if (buttonStateRight == PRESS)
+	{
+		pickedLight = nullptr;
+
 	}
 }
 
@@ -466,8 +748,13 @@ inline void World::calculateButtonsStates(double deltaTime)
 		pick();
 		break;
 	case Tools::Seon:
+		seon();
 		break;
 	case Tools::Toggle:
+		toggle();
+		break;
+	case Tools::LightPick:
+		lightPick();
 		break;
 	}
 }
@@ -484,12 +771,11 @@ inline void World::calculateLights(double deltaTime)
 
 void World::processKeys(const bool keys[], const double & deltaTime)
 {
-	static RenderMode last_rm = RenderMode::DEFAULT;
 	static float toggle_time_renderMode = 0.0f;	static char m = 2 ;
 	static float toggle_time_tools = 0.0f;
 	//static float toggle_time_jump = 0.0f;
 
-	static bool last_space= FALSE;
+	static bool last_space= false;
 	toggle_time_renderMode += deltaTime;	toggle_time_tools += deltaTime;
 
 
@@ -504,11 +790,19 @@ void World::processKeys(const bool keys[], const double & deltaTime)
 		player->setMode(CameraMode::FLY);
 
 #ifdef _DEBUG
-	if (keys[GLFW_KEY_F11])
+	if (keys[GLFW_KEY_F10])
 	{
 		if (toggle_time_renderMode > 1)
 		{
 			debugDrawOn = !debugDrawOn;
+			toggle_time_renderMode = 0;
+		}
+	}
+	if (keys[GLFW_KEY_F11])
+	{
+		if (toggle_time_renderMode > 1)
+		{
+			debugRenderOn = !debugRenderOn;
 			toggle_time_renderMode = 0;
 		}
 	}
@@ -520,39 +814,63 @@ void World::processKeys(const bool keys[], const double & deltaTime)
 			toggle_time_renderMode = 0;
 		}
 	}
+
 #endif
 
-	if (keys[GLFW_KEY_F10])
-	{
-		if (toggle_time_renderMode > 1)
-		{
-			last_rm = last_rm + 1;
-			//cout << static_cast<int>( last_rm )<< endl;
-
-			GObject::setRenderMode(last_rm);
-			toggle_time_renderMode = 0;
-		}
-	}
 	if (keys[GLFW_KEY_F9])
 	{
 		if (toggle_time_renderMode > 1)
 		{
-			GObject::setRenderMode(RenderMode::DEFAULT);
+			renderMode = (renderMode + 1) % RenderMode::SHADOW_CALC;
+			cout << static_cast<int>( renderMode )<< endl;
+
+			toggle_time_renderMode = 0;
+		}
+	}
+	if (keys[GLFW_KEY_F8])
+	{
+		if (toggle_time_renderMode > 1)
+		{
+			renderMode = RenderMode::DEFAULT;
 			toggle_time_renderMode = 0;
 		}
 	}
 
+	if (keys[GLFW_KEY_F7])
+	{
+		if (toggle_time_renderMode > 1)
+		{
+			static bool day = true;
+			if (day) { GameObject::setDegreeOfDay(0); day = false; }
+			else { GameObject::setDegreeOfDay(180); day = true; }
+			toggle_time_renderMode = 0;
+		}
+	}
 
 	if (keys[GLFW_KEY_X])
 	{
 		if (toggle_time_renderMode > 1)
 		{
 			flashLight->toggleOnHand();
-			dynamic_pointer_cast<DefaultDynamicObject>(spot_lights[0])->toggleToggleMode();
 			toggle_time_renderMode = 0;
 		}
 	}
-
+	if (keys[GLFW_KEY_F])
+	{
+		if (toggle_time_renderMode > 1)
+		{
+			flashLight->toggleActive();
+			toggle_time_renderMode = 0;
+		}
+	}
+	if (keys[GLFW_KEY_T])
+	{
+		if (toggle_time_renderMode > 1 && pickedLight !=nullptr)
+		{
+			pickedLight->toggleActive();
+			toggle_time_renderMode = 0;
+		}
+	}
 
 	Speed sp = Speed::NORMAL;
 	if (keys[GLFW_KEY_LEFT_SHIFT]) {
@@ -619,35 +937,44 @@ void World::processKeys(const bool keys[], const double & deltaTime)
 
 	//bitset<sizeof(12)>x(directions);
 	//cout <<  x  << endl;
-
-
+	static Tools last_tool=Tools::Pick;
+	static unsigned int option = 0;
 	if (toggle_time_tools>0.5f)
 	{
 		if (keys[GLFW_KEY_1]) {
 			tool = Tools::Pick;
+			if (last_tool != Tools::Pick)
+				option = 0;
 			toggle_time_tools = 0.0f;
+			last_tool = Tools::Pick;
+
 		}
 		else if (keys[GLFW_KEY_2]) {
 			tool = Tools::Toggle;
+			if (last_tool != Tools::Toggle)
+				option = 0;
+			this->option = Options::Toggle_Rotate + option;
+			option = (option+1) % 2;
 			toggle_time_tools = 0.0f;
+			last_tool = Tools::Toggle;
+
 		}
 		else if (keys[GLFW_KEY_3]) {
-
+			tool = Tools::Seon;
+			if (last_tool != Tools::Seon)
+				option = 0;
+			this->option  = Options::Seon_White + option;
+			option = (option+1) % 4;
 			toggle_time_tools = 0.0f;
+			last_tool = Tools::Seon;
 		}
 		else if (keys[GLFW_KEY_4]) {
-			tool = Tools::Seon;
-			option = Options::Seon_White;
-			/*
-			glm::vec3 pos = player->getPosition()+ player->getForwardDirection()*10;
-				
-			point_lights.emplace_back(new GSeon(pos, glm::vec3{ 1,0,0.0f }));
-			objects.push_back(dynamic_pointer_cast<GObject>(point_lights.back()));
-
-			picked_obj = static_pointer_cast<Moveable>(point_lights.back());
-			cout << typeid(*picked_obj).name() << endl;
-			*/
+			tool = Tools::LightPick;
+			if (last_tool != Tools::LightPick)
+				option = 0;
 			toggle_time_tools = 0.0f;
+			last_tool = Tools::LightPick;
+
 		}
 
 
@@ -656,17 +983,17 @@ void World::processKeys(const bool keys[], const double & deltaTime)
 	if ( toggled_objs.size() > 0 ) {
 		//cout << typeid(*picked_obj).name() << endl;
 
-		if ( option == Options::Toggle_Rotate )
+		if ( this->option == Options::Toggle_Rotate )
 		{
 			double x = 0, y = 0, z = 0;
 			if (keys[324])
-				x -= 45*deltaTime;
-			if (keys[326])
-				x += 45 * deltaTime;
-			if (keys[322])
-				y -= 45 * deltaTime;	
-			if (keys[328])
 				y += 45 * deltaTime;
+			if (keys[326])
+				y -= 45 * deltaTime;	
+			if (keys[322])
+				x -= 45*deltaTime;
+			if (keys[328])
+				x += 45 * deltaTime;
 			if (keys[327])
 				z -= 45 * deltaTime;
 			if (keys[329])
@@ -678,13 +1005,13 @@ void World::processKeys(const bool keys[], const double & deltaTime)
 
 			//cout << "Keys of rotate" << endl;
 		}
-		else if ( option == Options::Toggle_Translate )
+		else if ( this->option == Options::Toggle_Translate )
 		{
 			double x = 0, y = 0, z = 0;
 				if (keys[324])
-					x += 1 * deltaTime;
-				if (keys[326])
 					x -= 1 * deltaTime;
+				if (keys[326])
+					x += 1 * deltaTime;
 				if (keys[321])
 					y -= 1 * deltaTime;
 				if (keys[327])
@@ -798,19 +1125,38 @@ World::~World()
 	delete player;
 }
 #ifdef _DEBUG
-void World::loopDebugView()
+void World::calculateDebugView()
 {
-	static int index = 0;
-	switch (index)
+	switch (debugView)
 	{
 	case 0:
-		GObject::setDebugViewProjMatrix(sun->getLightViewMatrix(), sun->getLightProjMatrix() );
-		index = 1;
+		GObject::setDebugViewProjMatrix(sun->getLightViewMatrix(), sun->getLightProjMatrix());
 		break;
 	case 1:
+		GObject::setDebugViewProjMatrix(flashLight->getLightViewMatrix(), flashLight->getLightProjMatrix());
 
-		index = 0;
 		break;
 	}
+}
+void World::loopDebugView()
+{
+	switch (debugView)
+	{
+	case 0:
+		debugView = 1;
+		break;
+	case 1:
+		debugView = 0;
+		break;
+	}
+}
+void World::debugRenderScene(GLuint texture)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(debug_program);
+	glActiveTexture(GL_TEXTURE0 + GObject::getAvaibleTextureUnit());
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glUniform1i(100, GObject::getAvaibleTextureUnit());
+	renderScene();
 }
 #endif

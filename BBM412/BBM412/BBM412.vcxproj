@@ -24,30 +24,43 @@
     <ClCompile Include="DefaultDynamicObject.cpp" />
     <ClCompile Include="DefaultStaticObject.cpp" />
     <ClCompile Include="DirecLight.cpp" />
+    <ClCompile Include="Fern.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GBasicLightObject.cpp" />
-    <ClCompile Include="GDynamicBasicObject.cpp" />
+    <ClCompile Include="GBasicTextureLightObject.cpp" />
+    <ClCompile Include="GDefaultMultiTextureObject.cpp" />
     <ClCompile Include="GBasicObject.cpp" />
     <ClCompile Include="GBasicTextureObject.cpp" />
     <ClCompile Include="GDirecLight.cpp" />
     <ClCompile Include="GDynamicDefaultObject.cpp" />
     <ClCompile Include="GExceptions.cpp" />
     <ClCompile Include="FlashLight.cpp" />
+    <ClCompile Include="GMapAObject.cpp" />
+    <ClCompile Include="GMapNAObject.cpp" />
     <ClCompile Include="GMapNRObject.cpp" />
     <ClCompile Include="GMapNSObject.cpp" />
+    <ClCompile Include="GMapRObject.cpp" />
     <ClCompile Include="GObject.cpp" />
     <ClCompile Include="GPointLight.cpp" />
     <ClCompile Include="GDefaultSplatObject.cpp" />
+    <ClCompile Include="GreyRock.cpp" />
     <ClCompile Include="GSpotLight.cpp" />
     <ClCompile Include="GDefaultObject.cpp" />
+    <ClCompile Include="GTiledTextureObject.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="MapleTree.cpp" />
+    <ClCompile Include="Moon.cpp" />
+    <ClCompile Include="PineTree.cpp" />
     <ClCompile Include="pKinematicObject.cpp" />
     <ClCompile Include="pObject.cpp" />
     <ClCompile Include="PointLight.cpp" />
+    <ClCompile Include="RedRock.cpp" />
     <ClCompile Include="Seon.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="SpotLight.cpp" />
+    <ClCompile Include="StaticDefaultSplatObject.cpp" />
     <ClCompile Include="Sun.cpp" />
     <ClCompile Include="pDynamicObject.cpp" />
     <ClCompile Include="main.cpp" />
@@ -62,30 +75,44 @@
     <ClInclude Include="DefaultDynamicObject.h" />
     <ClInclude Include="DefaultStaticObject.h" />
     <ClInclude Include="DirecLight.h" />
+    <ClInclude Include="Fern.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GBasicLightObject.h" />
-    <ClInclude Include="GDynamicBasicObject.h" />
+    <ClInclude Include="GBasicTextureLightObject.h" />
+    <ClInclude Include="GDefaultMultiTextureObject.h" />
     <ClInclude Include="GBasicObject.h" />
     <ClInclude Include="GBasicTextureObject.h" />
     <ClInclude Include="GDirecLight.h" />
     <ClInclude Include="GDynamicDefaultObject.h" />
     <ClInclude Include="GExceptions.h" />
     <ClInclude Include="FlashLight.h" />
+    <ClInclude Include="GMapAObject.h" />
+    <ClInclude Include="GMapNAObject.h" />
     <ClInclude Include="GMapNRObject.h" />
     <ClInclude Include="GMapNSObject.h" />
+    <ClInclude Include="GMapRObject.h" />
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GPointLight.h" />
     <ClInclude Include="GDefaultSplatObject.h" />
+    <ClInclude Include="GreyRock.h" />
     <ClInclude Include="GSpotLight.h" />
     <ClInclude Include="GDefaultObject.h" />
+    <ClInclude Include="GTiledTextureObject.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="MapleTree.h" />
+    <ClInclude Include="Moon.h" />
+    <ClInclude Include="PineTree.h" />
     <ClInclude Include="pKinematicObject.h" />
     <ClInclude Include="pObject.h" />
     <ClInclude Include="PointLight.h" />
+    <ClInclude Include="RedRock.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Seon.h" />
     <ClInclude Include="Sky.h" />
     <ClInclude Include="SpotLight.h" />
+    <ClInclude Include="StaticDefaultSplatObject.h" />
     <ClInclude Include="Sun.h" />
     <ClInclude Include="pPerson.h" />
     <ClInclude Include="pStaticObject.h" />
@@ -97,16 +124,14 @@
   <ItemGroup>
     <None Include="..\Debug\shaders\gdefaultobject\default.frag.glsl" />
     <None Include="..\Debug\shaders\gdefaultobject\default.vert.glsl" />
-    <None Include="..\Debug\shaders\glight\basictexture_light.frag.glsl" />
-    <None Include="..\Debug\shaders\glight\basictexture_light.vert.glsl" />
-    <None Include="..\Debug\shaders\glight\basic_light.frag.glsl" />
-    <None Include="..\Debug\shaders\glight\basic_light.vert.glsl" />
-    <None Include="..\Debug\shaders\gobject\basic.frag.glsl" />
-    <None Include="..\Debug\shaders\gobject\basic.vert.glsl" />
-    <None Include="..\Debug\shaders\gobject\basictexture.frag.glsl" />
-    <None Include="..\Debug\shaders\gobject\basictexture.vert.glsl" />
+    <None Include="..\Debug\shaders\gdefaultobject\mapa.frag.glsl" />
+    <None Include="..\Debug\shaders\gdefaultobject\mapa.vert.glsl" />
     <None Include="..\Debug\shaders\gobject\onlydepth.frag.glsl" />
     <None Include="..\Debug\shaders\gobject\onlydepth.vert.glsl" />
+    <None Include="..\Debug\shaders\greflection\onlyreflection.frag.glsl" />
+    <None Include="..\Debug\shaders\greflection\onlyreflection.vert.glsl" />
+    <None Include="..\Debug\shaders\gsplat\defaultsplat.frag.glsl" />
+    <None Include="..\Debug\shaders\gsplat\defaultsplat.vert.glsl" />
     <None Include="..\Debug\shaders\world\bloom.frag.glsl" />
     <None Include="..\Debug\shaders\world\bloom.vert.glsl" />
     <None Include="..\Debug\shaders\world\blurHorizantal.frag.glsl" />
@@ -115,8 +140,7 @@
     <None Include="..\Debug\shaders\world\blurVertical.vert.glsl" />
     <None Include="..\Debug\shaders\world\renderscene.frag.glsl" />
     <None Include="..\Debug\shaders\world\renderscene.vert.glsl" />
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{32884744-b90f-46e3-ba6c-0f86a87103c3}</ProjectGuid>
@@ -227,13 +251,13 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeaderFile>stdafx.h;$(ProjectDir)</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>

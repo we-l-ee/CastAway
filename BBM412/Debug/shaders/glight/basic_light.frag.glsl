@@ -1,11 +1,12 @@
 #version 430 core
 
-in vec4 vcolor;
+layout(location = 1)uniform vec4 color;
 
-layout(location=1)out vec4 fcolor;
+layout(location = 0) out vec4 fcolor;
+layout(location = 1) out vec4 blurcolor;
 
 void main(void) {
 
-	fcolor = vcolor;
-
+	 blurcolor = color;
+	 fcolor =color;//vec4(0);
 }

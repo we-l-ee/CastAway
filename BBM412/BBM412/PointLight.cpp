@@ -13,6 +13,7 @@ PointLight::PointLight(const glm::vec3 & dis, const glm::vec3 & color):
 
 PointLight::PointLight(const PointLightData & _pointlight, const glm::vec3 & dis):
 	Moveable(dis),pointlight(_pointlight), strengthData{ pointlight.ambient, pointlight.diffuse , pointlight.specular , 0.1 }
+	, current_strength(1.0f), delta_strength(0.1f)
 {
 }
 
@@ -30,7 +31,7 @@ PointLight::PointLight(const std::string & obj, const glm::vec3 & dis) : PointLi
 
 PointLight::PointLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis) : 
 	Moveable(dis), pointlight(readLightFile("objects\\" + sub + "\\" + obj + ".light") ), 
-	strengthData{ pointlight.ambient, pointlight.diffuse , pointlight.specular , 0.1f }
+	strengthData{ pointlight.ambient, pointlight.diffuse , pointlight.specular , 0.1f },current_strength(1.0f),delta_strength(0.1f)
 {
 }
 
@@ -39,23 +40,6 @@ PointLight::PointLight(const std::string & sub, const std::string & obj, const g
 inline void PointLight::calculationAfterTranslate()
 {
 }
-
-bool PointLight::isActive() const
-{
-	return active;
-}
-
-void PointLight::setActive(bool _active)
-{
-	active = _active;
-}
-
-void PointLight::toggleActive()
-{
-	active = !active;
-}
-
-
 
 PointLightData PointLight::getPointLight() const
 {

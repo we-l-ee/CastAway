@@ -9,68 +9,77 @@
 #include "glm\ext.hpp"
 
 class GDefaultSplatObject:
-	public GObject
+	virtual public GObject
 {
 
 
 protected:
 
 	static GLuint program;
+	static GLuint only_texture_program;
+
 	static GLuint uniform_index[3];
 
 	GLuint VAO, VBO;
 
 	glm::vec3 m_specular;
 	GLfloat shininess;
-
 	GLuint buffer;
-	Texture Texture1;
-	Texture Texture2;
-	Texture Texture3;
-	Texture Texture4;
 
-	Texture SplatTexture;
-
-	Texture defaultTexture1;
-	Texture defaultTexture2;
-	Texture defaultTexture3;
-	Texture defaultTexture4;
-
-	Texture defaultSplatTexture;
-
+	vector<Texture> textures;
+	vector<Texture> defaultTextures;
 
 	unsigned int points_size;
 
-	//vector<glm::vec3> points;
-	//vector<glm::vec2> text_cords;
-	//vector<glm::vec3> normals;
-
-	glm::mat4 model;
+	GLuint current_program;
 
 protected:
 
+	inline void initTexture( const vector<string> & texts );
+
 	inline void defaultRender();
-	inline void initTexture(string text1, string text2, string text3, string text4, string splat);
+	inline void basicTextureRender();
+	inline void wireframeRender();
+	inline void shadowCalculationRender();
+	inline void reflectionCalculationRender();
+
+	inline void defaultToggleRender(const glm::mat4 & model);
+	inline void basicTextureToggleRender(const glm::mat4 & model);
+	inline void wireframeToggleRender(const glm::mat4 & model);
+	inline void shadowCalculationToggleRender(const glm::mat4 & model);
+	inline void reflectionCalculationToggleRender(const glm::mat4 & model);
 
 public:
 
 
 
-	GDefaultSplatObject(const string & obj);
-	GDefaultSplatObject(const string & obj, const glm::vec3 & dis);
-	GDefaultSplatObject(const string & obj, const glm::mat4 & _model);
-	GDefaultSplatObject(const string & obj, const glm::mat4 & _model,
-		const glm::vec3 & _m_specular, const GLfloat & shininess);
+	GDefaultSplatObject(const string & obj, const GLuint & _prog = program);
+	GDefaultSplatObject(const string & obj, const glm::vec3 & dis, const GLuint & _prog = program);
+	GDefaultSplatObject(const string & obj, const glm::vec3 & dis, const glm::vec3 & _m_specular,
+		const GLfloat & shininess, const GLuint & _prog = program);
 
-	GDefaultSplatObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size);
-	GDefaultSplatObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const glm::mat4 & _model);
+	GDefaultSplatObject(const string & sub, const std::string & obj, const GLuint & _prog = program);
+	GDefaultSplatObject(const string & sub, const string & obj, const glm::vec3 & dis, const GLuint & _prog = program);
+	GDefaultSplatObject(const string & sub, const string & obj, const glm::mat4 & _model, const GLuint & _prog = program);
+	GDefaultSplatObject(const string & sub, const string & obj, const glm::mat4 & _model,
+		const glm::vec3 & _m_specular, const GLfloat & shininess, const GLuint & _prog = program);
+
+	GDefaultSplatObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const GLuint & _prog = program);
 	GDefaultSplatObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size,
-		const glm::mat4 & _model, const glm::vec3 & _m_specular, const GLfloat & shininess);
+		const glm::mat4 & _model, const GLuint & _prog = program);
+	GDefaultSplatObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size,
+		const glm::mat4 & _model, const glm::vec3 & _m_specular, const GLfloat & shininess, const GLuint & _prog = program);
 
 	virtual void render() override;
+	virtual void toggleRender(const glm::mat4 & model) override;
 
 
 	static void initialize();
+
+#ifdef _DEBUG
+	// Inherited via GObject
+	virtual void debugRender() override;
+#endif // _DEBUG
 
 	~GDefaultSplatObject();
 };

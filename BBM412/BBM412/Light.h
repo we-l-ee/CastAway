@@ -3,8 +3,11 @@
 
 class Light: public virtual GameObject
 {
-protected:
+	bool active{ true };
 
+	bool shadowMapInitialized = { false };
+protected:
+	
 	GLuint depthMapBuffer, depthMap;
 	
 	unsigned int SHADOW_WIDTH, SHADOW_HEIGHT;
@@ -12,7 +15,12 @@ protected:
 public:
 	Light();
 
-	void setShadow_WH(const unsigned & _width, const unsigned & _height);
+	void shadowMappingInitialize(const unsigned & _width, const unsigned & _height);
+
+	bool isActive() const;
+
+	void setActive(bool s);
+	void toggleActive();
 
 	virtual void increaseLightStrength() = 0;
 	virtual void decreaseLightStrength() = 0;
@@ -25,6 +33,7 @@ public:
 	void finishMapping(unsigned int textureUnit);
 
 	virtual void calculateLightening() = 0;
+
 
 	~Light();
 };

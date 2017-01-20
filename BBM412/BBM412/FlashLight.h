@@ -12,19 +12,27 @@ class FlashLight:
 	glm::mat4 toggleScale;
 
 	bool onHand{ false };
-
+	bool noRender = { false };
 public:
+	void toggleNoRender();
+	void setNoRender(bool r) { noRender = r; }
 
 	FlashLight(const string & obj, const glm::vec3 & dis);
 
 	void toggleOnHand();
 
 	bool isOnHand();
-	inline void toggleDefaultRender();
+#ifdef _DEBUG
+	virtual void debugRender() override;
+#endif
 
 	virtual void render() override; 
+	virtual void toggleRender(const glm::mat4 & matrix) override;
 
 	virtual void calculateLightening() override;
+
+	glm::mat4 getLightViewMatrix() override;
+	glm::mat4 getLightProjMatrix() override;
 
 	// Inherited via Moveable
 	virtual void translate(glm::vec3 displacement) override;

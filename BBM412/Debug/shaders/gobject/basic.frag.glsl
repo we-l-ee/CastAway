@@ -1,11 +1,11 @@
 #version 430 core
 
-in vec4 vcolor;
+layout(location = 1)uniform vec4 color;
 
-layout(location=0)out vec4 fcolor;
+out vec4 fcolor;
 
 void main(void) {
 
-	fcolor = vcolor;
+	fcolor = color;
 
 }

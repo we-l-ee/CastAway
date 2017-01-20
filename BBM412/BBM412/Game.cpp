@@ -14,7 +14,7 @@ Game::Game()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	//glfwWindowHint(GLFW_SAMPLES, 4);
 
 #ifdef _DEBUG
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
@@ -51,10 +51,17 @@ Game::Game()
 #ifdef _DEBUG
 	int err;
 	if ((err = glGetError()) != GL_NO_ERROR) {
-		cout << "GlewInit has an error.. how interesting!" << endl << GObject::returnErrorString(err);
-		while ((err = glGetError()) != GL_NO_ERROR)
-			cout << endl << GObject::returnErrorString(err);
-	}
+		#ifdef _DEBUG
+				cout << "GlewInit has an error.. how interesting!" << endl << GObject::returnErrorString(err);
+		#endif
+				while ((err = glGetError()) != GL_NO_ERROR)
+				{
+		#ifdef _DEBUG
+					cout << endl << GObject::returnErrorString(err);
+		#endif
+		}
+
+}
 	cout << glGetString(GL_VENDOR) << endl << glGetString(GL_RENDERER) << endl;
 	cout << glGetString(GL_VERSION) << endl << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 

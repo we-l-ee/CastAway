@@ -2,7 +2,7 @@
 
 
 
-GMapNSObject::GMapNSObject()
+GMapNSObject::GMapNSObject() :GObject(glm::mat4{ 1.0f })
 {
 }
 

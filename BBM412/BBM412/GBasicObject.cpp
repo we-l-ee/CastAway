@@ -11,11 +11,11 @@ inline void GBasicObject::defaultRender()
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = GObject::camera->getViewProjMatrix()*GModel;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 
-	glUniform4fv(2, 1, &this->color[0]);
+	glUniform4fv(1, 1, &this->color[0]);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
@@ -29,13 +29,13 @@ inline void GBasicObject::wireframeRender()
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = GObject::camera->getViewProjMatrix()*GModel;
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniform4fv(2, 1, &wireframeColor[0]);
+	glUniform4fv(1, 1, &wireframeColor[0]);
+	glDrawArrays(GL_LINES, 0, points_size);
 
-	glDrawArrays(GL_LINE_LOOP, 0, points_size);
 }
 
 inline void GBasicObject::shadowCalculationRender()
@@ -47,9 +47,27 @@ inline void GBasicObject::shadowCalculationRender()
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = lightViewProj*GModel;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+
+	glDrawArrays(GL_TRIANGLES, 0, points_size);
+}
+
+inline void GBasicObject::reflectionCalculationRender()
+{
+	glUseProgram(current_program);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glm::mat4 mvp;
+
+
+	mvp = GObject::camera->getViewProjMatrix()*GModel*reflectionMatrix;
+
+	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+
+	glUniform4fv(1, 1, &this->color[0]);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
@@ -83,9 +101,9 @@ inline void GBasicObject::wireframeToggleRender(const glm::mat4 & model)
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
-	glUniform4fv(2, 1, &wireframeColor[0]);
+	glUniform4fv(1, 1, &wireframeColor[0]);
+	glDrawArrays(GL_LINES, 0, points_size);
 
-	glDrawArrays(GL_LINE_LOOP, 0, points_size);
 }
 
 inline void GBasicObject::shadowCalculationToggleRender(const glm::mat4 & model)
@@ -97,41 +115,72 @@ inline void GBasicObject::shadowCalculationToggleRender(const glm::mat4 & model)
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*model;
+	mvp = lightViewProj*model;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
 
+inline void GBasicObject::reflectionCalculationToggleRender(const glm::mat4 & model)
+{
+	glUseProgram(current_program);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glm::mat4 mvp;
+
+
+	mvp = GObject::camera->getProjMatrix()*model*reflectionMatrix;
+
+	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+
+	glUniform4fv(1, 1, &this->color[0]);
+
+	glDrawArrays(GL_TRIANGLES, 0, points_size);
+}
+
 GBasicObject::GBasicObject(const string & obj, const glm::vec4 & _color, const GLuint & _prog ):
-	GBasicObject(obj, obj,_color, glm::mat4(1.f), _prog ) 
+	GBasicObject(obj, obj,_color, glm::vec3(0.f), _prog ) 
 {
 }
 
 GBasicObject::GBasicObject(const string & sub, const string & obj, const glm::vec4 & _color, const GLuint & _prog ) :
-	GBasicObject(sub, obj, _color, glm::mat4(1.f), _prog)
+	GBasicObject(sub, obj, _color, glm::vec3(0.f), _prog)
 {
 }
 
-GBasicObject::GBasicObject(const string & obj, const glm::vec4 & _color, const glm::vec3 & _displace, const GLuint & _prog) :
-	GBasicObject(obj, obj,_color, glm::translate(_displace), _prog)
+GBasicObject::GBasicObject(const string & obj, const glm::vec4 & _color, const glm::vec3 & displacement, const GLuint & _prog) :
+	GBasicObject(obj, obj,_color, displacement, _prog)
 {
 }
 
-GBasicObject::GBasicObject(const string & sub, const string & obj, const glm::vec4 & _color, const glm::vec3 & _displace, const GLuint & _prog ) :
-	GBasicObject(sub,obj, _color, glm::translate(_displace), _prog)
+GBasicObject::GBasicObject(const string & sub, const string & obj, const glm::vec4 & _color, const glm::vec3 & displacement, const GLuint & _prog ) :
+	color(_color), GObject(glm::translate(displacement)), current_program(_prog)
 {
-
-}
-
-GBasicObject::GBasicObject(const string & sub, const string & obj, const glm::vec4 & _color, const glm::mat4 & _model, const GLuint & _prog ):
-	color(_color), model (_model) , current_program(_prog)
-{
+	construct(sub, obj, vao, vbo, points_size);
 #ifdef _DEBUG
-	throwError("GBasicObject()[enter]:\n");
+	throwError("GBasicObject()[exit]:\n");
 #endif
+}
 
+
+GBasicObject::GBasicObject(const GLuint & vao, const GLuint & vbo, const GLuint & _points_size, const glm::vec4 & _color, const GLuint & _prog ) :
+	GBasicObject(vao,vbo,_points_size,_color,glm::vec3{0},_prog)
+{
+
+}
+
+GBasicObject::GBasicObject(const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size, const glm::vec4 & _color, const glm::vec3 & displace, const GLuint & _prog):
+	vao(_vao), vbo(_vbo), points_size(_points_size), color(_color), current_program(_prog), GObject(glm::translate(displace))
+{
+
+
+}
+
+
+void GBasicObject::construct(const string & sub, const string & obj, GLuint & vao, GLuint & vbo, unsigned int & points_size)
+{
 	stringstream ss;
 	ss << "objects\\" << sub << "\\" << obj << ".obj";
 	vector<glm::vec3> points;
@@ -140,46 +189,18 @@ GBasicObject::GBasicObject(const string & sub, const string & obj, const glm::ve
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
+
 
 	points_size = points.size();
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*points.size(), &points[0], GL_STATIC_DRAW);
-
-#ifdef _DEBUG
-	throwError("GBasicObject()[exit]:\n");
-#endif
-}
-
-GBasicObject::GBasicObject(const GLuint & _vbo, const GLuint & _points_size, const glm::vec4 & _color, const GLuint & _prog ) :
-	GBasicObject(_vbo, _points_size, _color, glm::mat4{1.0f},_prog)
-{
-
-}
-
-GBasicObject::GBasicObject(const GLuint & _vbo, const GLuint & _points_size, const glm::vec4 & _color, const glm::vec3 & displace, GLuint & _prog):
-	GBasicObject(_vbo, _points_size, _color, glm::translate(displace), _prog)
-{
-}
-
-GBasicObject::GBasicObject(const GLuint & _vbo, const GLuint & _points_size, const glm::vec4 & _color, const glm::mat4 & _model, const GLuint & _prog ):
-	vbo(_vbo), points_size(_points_size), color(_color), model(_model) , current_program(_prog)
-
-{
-#ifdef _DEBUG
-	throwError("GBasicObject()[enter]:\n");
-#endif
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
 #ifdef _DEBUG
-	throwError("GBasicObject()[exit]:\n");
-#endif
+	GObject::throwError("GBasicObject::construct():\n");
+#endif // _DEBUG
 }
 
 void GBasicObject::render()
@@ -195,6 +216,10 @@ void GBasicObject::render()
 		break;
 	case RenderMode::SHADOW_CALC:
 		shadowCalculationRender();
+		break;
+
+	case RenderMode::REFLECTION_CALC:
+		reflectionCalculationRender();
 		break;
 
 	}
@@ -241,11 +266,14 @@ void GBasicObject::debugRender()
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-	glm::mat4 mvp = debug_viewProj*model;
+	glm::mat4 mvp = debug_viewProj*GModel;
 
-	glUniform4fv(2, 1, &color[0]);
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+	glUniform4fv(1, 1, &color[0]);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
+
+	throwError("GBasicObject::debugRender():");
+
 }
 #endif

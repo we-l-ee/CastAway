@@ -7,22 +7,23 @@ class GPointLight :
 {
 public:
 
-	GPointLight(const PointLightData & _pointlight, 
+	GPointLight(const PointLightData & _pointlight, const GLuint & _vao,
 		const GLuint & _vbo, const GLuint & _points_size, const glm::vec4 & _color, 
-		const glm::vec3 & dis = glm::vec3(.0f), const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
+		const glm::vec3 & dis = glm::vec3(.0f), const GLuint & _prog = GBasicLightObject::program);
 
-	GPointLight(const std::string & obj, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
-	GPointLight(const std::string & sub, const std::string & obj, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
-	GPointLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
-	GPointLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
+	GPointLight(const std::string & obj, const GLuint & _prog = GBasicLightObject::program);
+	GPointLight(const std::string & sub, const std::string & obj, const GLuint & _prog = GBasicLightObject::program);
+	GPointLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = GBasicLightObject::program);
+	GPointLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _prog = GBasicLightObject::program);
 
-	GPointLight(const std::string & obj, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GPointLight(const std::string & sub, const std::string & obj, const GLuint & _vbo, const GLuint & _points_size, 
-		const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
-	GPointLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _vbo, const GLuint & _points_size, 
-		const GLuint & _prog = (GLuint)RenderMode::WIREFRAME);
-	GPointLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _vbo, 
-		const GLuint & _points_size, const GLuint & _prog = (GLuint)RenderMode::WIREFRAME );
+	GPointLight(const std::string & obj, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size, const GLuint & _prog = GBasicLightObject::program );
+	GPointLight(const std::string & sub, const std::string & obj, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size,
+		const GLuint & _prog = GBasicLightObject::program);
+
+	GPointLight(const std::string & obj, const glm::vec3 & dis, const GLuint & _vao, const GLuint & _vbo, const GLuint & _points_size,
+		const GLuint & _prog = GBasicLightObject::program);
+	GPointLight(const std::string & sub, const std::string & obj, const glm::vec3 & dis, const GLuint & _vao, const GLuint & _vbo,
+		const GLuint & _points_size, const GLuint & _prog = GBasicLightObject::program);
 
 
 

@@ -1,7 +1,7 @@
 #version 430 core
 
 layout (location = 0) out vec4 fColor;
-layout (location = 1) out vec4 blurColor;
+layout(location = 1) out vec4 blurColor;
 
 
 in vec2 texCoord;
@@ -11,7 +11,10 @@ layout(location = 101) uniform vec3 m_specular;
 layout(location = 102) uniform float shininess;
 
 layout(location = 130) uniform sampler2DShadow sunShadowMap;
+layout(location = 140) uniform sampler2DShadow spotShadowMap;
+
 in vec3 sunSpaceCoord;
+in vec3 spotSpaceCoord;
 
 
 in vec3 Position;
@@ -54,8 +57,8 @@ struct SpotLight_t {
 	vec3 diffuse;
 	vec3 specular;
 
-	float cutOff;
-	float outerCutOff;
+	float innerCut;
+	float outerCut;
 
 	float ConstantAttenuation;
 	float LinearAttenuation;
@@ -79,23 +82,24 @@ layout(std140, binding = 2) uniform SpotLight{
 layout(location = 122)uniform int numSpotLight;
 
 
-vec3 directLightCalculations();
-vec3 pointLightCalculations();
-vec3 spotLightCalculations();
+vec3 directLightCalculations(vec3 color);
+vec3 pointLightCalculations(vec3 color);
+vec3 spotLightCalculations(vec3 color);
 
 
 void main(void) {
+	vec3 color = vec3(texture(diffuse, texCoord).xyz);
 
 	vec3 result;
-	result = pointLightCalculations();
-	result += directLightCalculations();
-	result += spotLightCalculations();
+	result = pointLightCalculations(color);
+	result += directLightCalculations(color);
+	result += spotLightCalculations(color);
 
 	fColor = vec4( result, 1.0 );
-
+	blurColor = vec4(vec3(0), 1.0);
 }
 
-vec3 directLightCalculations() {
+vec3 directLightCalculations(vec3 color) {
 	vec3 result = vec3(0);
 	int i = 0;
 	if(numDirectLight>i)
@@ -103,20 +107,24 @@ vec3 directLightCalculations() {
 
 		vec3 normal = normalize(Normal);
 		vec3 viewDir = normalize(-Position);
-		vec3 lightDir = normalize( directLight[i].direction );
+		vec3 lightDir = normalize( -directLight[i].direction );
 
 		vec3 halfwayDir = normalize(lightDir + viewDir);
 
 		float diff = max(0.0, dot(lightDir, normal));
 		float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
 
-		vec3 ambient = directLight[i].ambient * vec3(texture(diffuse, texCoord).xyz);
-		vec3 diffuse = directLight[i].diffuse * diff * vec3(texture(diffuse, texCoord).xyz);
-		vec3 specular = directLight[i].specular * spec * m_specular;
+		vec3 ambient = directLight[i].ambient * color;
+		vec3 diffuse = directLight[i].diffuse * diff * color;
+		vec3 specular = directLight[i].specular * spec * m_specular*color;
 
 		float alpha = texture(sunShadowMap, sunSpaceCoord);
 
-		result += ambient*directLight[i].color + alpha*diffuse*directLight[i].color + alpha*specular*directLight[i].color;
+		result += ambient*directLight[i].color +
+			alpha*	
+			diffuse*directLight[i].color+
+			alpha* 
+			specular*directLight[i].color;
 	}
 
 	for (i = 1; i < numDirectLight; i++)
@@ -130,16 +138,16 @@ vec3 directLightCalculations() {
 		float diff = max(0.0, dot(lightDir, normal));
 		float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
 
-		vec3 ambient = directLight[i].ambient * vec3(texture(diffuse, texCoord).xyz);
-		vec3 diffuse = directLight[i].diffuse * diff * vec3(texture(diffuse, texCoord).xyz);
-		vec3 specular = directLight[i].specular * spec * m_specular;
+		vec3 ambient = directLight[i].ambient * color;
+		vec3 diffuse = directLight[i].diffuse * diff * color;
+		vec3 specular = directLight[i].specular * spec * m_specular*color;
 
 		result += ambient*directLight[i].color + diffuse*directLight[i].color + specular*directLight[i].color;
 	}
 	return result;
 }
 
-vec3 pointLightCalculations() {
+vec3 pointLightCalculations(vec3 color) {
 	vec3 result = vec3(0);
 	for (int i = 0; i < numPointLight; i++) {
 
@@ -160,9 +168,9 @@ vec3 pointLightCalculations() {
 		float diff = max(0.0, dot(lightDir, normal));
 		float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
 
-		vec3 ambient = pointLight[i].ambient * vec3(texture(diffuse, texCoord).xyz);
-		vec3 diffuse = pointLight[i].diffuse * diff * vec3(texture(diffuse, texCoord).xyz);
-		vec3 specular = pointLight[i].specular * spec * m_specular;
+		vec3 ambient = pointLight[i].ambient * color;
+		vec3 diffuse = pointLight[i].diffuse * diff * color;
+		vec3 specular = pointLight[i].specular * spec * m_specular*color;
 
 
 		vec3 scatteredLight = //ambient*vec3(pointLight[i].color.xyz) +
@@ -175,14 +183,63 @@ vec3 pointLightCalculations() {
 	return result;
 }
 
-vec3 spotLightCalculations() {
+vec3 spotLightCalculations(vec3 color) {
 
 	vec3 result = vec3(0);
-	for (int i = 0; i < numSpotLight; i++)
+	int i = 0;
+	if (numSpotLight > 0)
 	{
-			float outerCut = cos(radians(15));
-			float innerCut = cos(radians(12));
-		
+
+		vec3 lightPosition = spotLight[i].position;
+
+		float lightDistance = length(lightPosition - Position);
+
+		vec3 normal = normalize(-Normal);
+		vec3 viewDir = normalize(-Position);
+		vec3 spotLightDir = normalize(
+			//vec3(0,0,-1)
+			spotLight[0].direction
+		);
+		vec3 lightDir = normalize(lightPosition - Position);
+
+
+		vec3 halfwayDir = normalize(lightDir + viewDir);
+
+		float attenuation =
+			1.0 / (spotLight[i].ConstantAttenuation +
+				spotLight[i].LinearAttenuation * lightDistance + spotLight[i].QuadraticAttenuation * lightDistance * lightDistance);
+
+		float diff = max(0.0, dot(-lightDir, normal));
+		float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
+
+		vec3 ambient = spotLight[i].ambient * color;
+		vec3 diffuse = spotLight[i].diffuse * diff * color;
+		vec3 specular = spotLight[i].specular * spec * m_specular*color;
+
+		float theta = dot(-lightDir, spotLightDir);
+		float intensity = smoothstep(spotLight[i].outerCut, spotLight[i].innerCut, theta);
+
+		float alpha = texture(spotShadowMap, spotSpaceCoord);
+
+		vec3 scatteredLight = 
+			//ambient*spotLight[i].color
+			+spotLight[i].color*diffuse
+			*attenuation
+			*intensity
+			*alpha
+			;
+
+		vec3 reflectedLight = spotLight[i].color*specular
+			*attenuation
+			*intensity
+			*alpha
+			;
+
+		result += scatteredLight + reflectedLight;
+	}
+	for (int i = 1; i < numSpotLight; i++)
+	{
+
 		vec3 lightPosition = spotLight[i].position;
 
 		float lightDistance = length(lightPosition - Position);
@@ -205,19 +262,12 @@ vec3 spotLightCalculations() {
 		float diff = max(0.0, dot(-lightDir, normal));
 		float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
 
-		vec3 ambient = spotLight[i].ambient * vec3( texture(diffuse, texCoord).rgb );
-		vec3 diffuse = spotLight[i].diffuse * diff * vec3(texture(diffuse, texCoord).rgb);
-		vec3 specular = spotLight[i].specular * spec * m_specular;
+		vec3 ambient = spotLight[i].ambient * color;
+		vec3 diffuse = spotLight[i].diffuse * diff * color;
+		vec3 specular = spotLight[i].specular * spec * m_specular*color;
 
 		float theta = dot(-lightDir, spotLightDir);
-		float epsilon = innerCut - outerCut;
-		float intensity = clamp(
-			(theta) / epsilon
-			//;
-			, 0.0, 1.0);
-		intensity = smoothstep(outerCut, innerCut, theta);
-		float la = 1.0 / (spotLight[i].ConstantAttenuation +
-			spotLight[i].LinearAttenuation * lightDistance);
+		float intensity = smoothstep(spotLight[i].outerCut, spotLight[i].innerCut, theta);
 
 		vec3 scatteredLight = //ambient*spotLight[i].color*la 
 			+ spotLight[i].color*diffuse

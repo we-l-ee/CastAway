@@ -13,11 +13,6 @@ class GDynamicDefaultObject:
 	public GDefaultObject, public virtual Moveable
 {
 
-protected:
-
-	bool toggle{ false };
-	inline void toggleDefaultRender();
-
 public:
 
 	GDynamicDefaultObject(const string & obj, const GLuint & _prog = GDefaultObject::program);
@@ -31,14 +26,10 @@ public:
 		const glm::vec3 & _m_specular, const GLfloat & shininess, const GLuint & _prog = GDefaultObject::program);
 
 	GDynamicDefaultObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const GLuint & _prog = GDefaultObject::program);
-	GDynamicDefaultObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const glm::mat4 & _model, const GLuint & _prog = GDefaultObject::program);
+	GDynamicDefaultObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const glm::vec3 & displacement, const GLuint & _prog = GDefaultObject::program);
 	GDynamicDefaultObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size,
-		const glm::mat4 & _model, const glm::vec3 & _m_specular, const GLfloat & shininess, const GLuint & _prog = GDefaultObject::program);
+		const glm::vec3 & displacement, const glm::vec3 & _m_specular, const GLfloat & shininess, const GLuint & _prog = GDefaultObject::program);
 
-	bool isToggleMode();
-	virtual void toggleToggleMode();
-
-	virtual void render() override;
 
 	// Inherited via Moveable
 	virtual void translate(glm::vec3 displacement) override;

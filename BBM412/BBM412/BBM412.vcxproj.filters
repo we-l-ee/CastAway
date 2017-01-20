@@ -63,9 +63,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SpotLight.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
@@ -156,9 +153,6 @@
     <ClCompile Include="Seon.cpp">
       <Filter>Source Files\Specilized Classes</Filter>
     </ClCompile>
-    <ClCompile Include="GDynamicBasicObject.cpp">
-      <Filter>Source Files\Dynamic Classes</Filter>
-    </ClCompile>
     <ClCompile Include="GMapNRObject.cpp">
       <Filter>Source Files\Graphic Classes</Filter>
     </ClCompile>
@@ -170,6 +164,51 @@
     </ClCompile>
     <ClCompile Include="GMapNSObject.cpp">
       <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Moon.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Fern.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GMapAObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GBasicTextureLightObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GMapNAObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticDefaultSplatObject.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GDefaultMultiTextureObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GMapRObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="MapleTree.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GTiledTextureObject.cpp">
+      <Filter>Source Files\Graphic Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="PineTree.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="GreyRock.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RedRock.cpp">
+      <Filter>Source Files\Specilized Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,23 +311,59 @@
     <ClInclude Include="GMapNRObject.h">
       <Filter>Header Files\Graphics Classes</Filter>
     </ClInclude>
-    <ClInclude Include="GDynamicBasicObject.h">
-      <Filter>Header Files\Dynamic Classes</Filter>
-    </ClInclude>
     <ClInclude Include="GBasicLightObject.h">
       <Filter>Header Files\Graphics Classes</Filter>
     </ClInclude>
     <ClInclude Include="GMapNSObject.h">
       <Filter>Header Files\Graphics Classes</Filter>
     </ClInclude>
+    <ClInclude Include="Moon.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GBasicTextureLightObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GMapAObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GMapNAObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Fern.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticDefaultSplatObject.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GMapRObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GDefaultMultiTextureObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="GTiledTextureObject.h">
+      <Filter>Header Files\Graphics Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="MapleTree.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="PineTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GreyRock.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="RedRock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Debug\shaders\gobject\basic.frag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\Debug\shaders\gobject\basic.vert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\Debug\shaders\gobject\onlydepth.frag.glsl">
       <Filter>Resource Files</Filter>
     </None>
@@ -305,26 +380,6 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\Debug\shaders\gdefaultobject\default.vert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
-    <None Include="..\Debug\shaders\gobject\basictexture.frag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\Debug\shaders\gobject\basictexture.vert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\Debug\shaders\glight\basic_light.frag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\Debug\shaders\glight\basic_light.vert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\Debug\shaders\glight\basictexture_light.frag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\Debug\shaders\glight\basictexture_light.vert.glsl">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\Debug\shaders\world\bloom.frag.glsl">
@@ -345,5 +400,24 @@
     <None Include="..\Debug\shaders\world\blurVertical.vert.glsl">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\Debug\shaders\gdefaultobject\mapa.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gdefaultobject\mapa.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gsplat\defaultsplat.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\gsplat\defaultsplat.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\greflection\onlyreflection.frag.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\Debug\shaders\greflection\onlyreflection.vert.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
 </Project>

@@ -8,7 +8,7 @@ Camera::Camera(glm::vec3 _pos, glm::vec3 up , GLfloat yaw , GLfloat pitch  ) :
 	position = _pos;
 	dir.Up = up;
 
-	projMatrix = glm::perspective(glm::radians(45.0f), 2.0f, 0.1f, 1000.0f);
+	projMatrix = glm::perspective(glm::radians(45.0f), 2.0f, 0.1f, 2000.0f);
 
 }
 
@@ -16,7 +16,7 @@ Camera::~Camera()
 {
 }
 
-void Camera::getForwardRay(float to, btVector3 & start, btVector3 & end)
+void Camera::getForwardXZRay(float to, btVector3 & start, btVector3 & end)
 {
 	start = btVector3(position.x, position.y, position.z);
 	switch (cameraMode)
@@ -26,6 +26,23 @@ void Camera::getForwardRay(float to, btVector3 & start, btVector3 & end)
 		end = start +
 			btVector3(forward.x, forward.y, forward.z)
 			//btVector3(dir.Forward.x, dir.Forward.y, dir.Forward.z)
+			* to;
+		break;
+	case CameraMode::FLY:
+		end = start + btVector3(fly.Forward.x, fly.Forward.y, fly.Forward.z) * to;
+		break;
+	}
+}
+
+void Camera::getForwardXYZRay(float to, btVector3 & start, btVector3 & end)
+{
+	start = btVector3(position.x, position.y, position.z);
+	switch (cameraMode)
+	{
+	case CameraMode::DEFAULT:
+	case CameraMode::GHOST:
+		end = start +
+			btVector3(dir.Forward.x, dir.Forward.y, dir.Forward.z)
 			* to;
 		break;
 	case CameraMode::FLY:
