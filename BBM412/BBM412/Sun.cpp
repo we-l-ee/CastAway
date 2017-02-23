@@ -42,7 +42,7 @@ inline void Sun::defaultRender()
 
 inline void Sun::wireframeRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[WIREFRAME]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 

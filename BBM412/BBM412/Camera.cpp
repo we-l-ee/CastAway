@@ -1,7 +1,6 @@
 #include "Camera.h"
 #include <iostream>
 
-
 Camera::Camera(glm::vec3 _pos, glm::vec3 up , GLfloat yaw , GLfloat pitch  ) : 
 	MouseSensitivity(SENSITIVTY), Yaw(yaw), Pitch(pitch)
 {
@@ -115,6 +114,20 @@ void Camera::getWorldUpRay(float to, btVector3 & start, btVector3 & end)
 {
 	start = btVector3(position.x, position.y, position.z);
 	end = start + btVector3(dir.Up.x, dir.Up.y, dir.Up.z) * to;
+}
+
+glm::mat4 Camera::getSeaReflectedView()
+{
+	glm::vec3 forward{
+		cos(glm::radians(this->Yaw)) * cos(glm::radians(-this->Pitch)),
+		sin(glm::radians(-this->Pitch)),
+		sin(glm::radians(this->Yaw)) * cos(-glm::radians(this->Pitch))
+	};
+	forward = glm::reflect(dir.Forward, glm::vec3{ 0,1,0 });
+	glm::vec3 position = glm::vec3{ this->position.x, -this->position.y, this->position.z };
+	position = glm::mat3(glm::scale(glm::vec3{ 1,-1,1 }))* this->position;
+
+	return glm::lookAt(position, position + forward, this->dir.Up);
 }
 
 glm::mat4 Camera::getViewMatrix() const
@@ -270,9 +283,9 @@ glm::vec3 Camera::processMovement(CameraMovement direction, double deltaTime, Sp
 		if((int)(direction &   CameraMovement::BACKWARD))
 			deltaPos -= fly.Forward* delta;
 		if((int)(direction &   CameraMovement::LEFT))
-			deltaPos += fly.Right*delta;
-		if((int)(direction &   CameraMovement::RIGHT))
 			deltaPos -= fly.Right*delta;
+		if((int)(direction &   CameraMovement::RIGHT))
+			deltaPos += fly.Right*delta;
 
 		if((int)(direction &   CameraMovement::UP))
 			deltaPos += fly.Up *delta;

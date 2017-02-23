@@ -31,7 +31,7 @@ GBasicTextureObject::GBasicTextureObject(const string & sub, const string & obj,
 	defaultTexture = texture;
 
 #ifdef _DEBUG
-	throwError("GBasicTextureObject()[exit]:\n");
+	throwError("GBasicTextureObject()[exit]:\n"+ to_string(typeid(this).hash_code()));
 #endif
 }
 
@@ -111,7 +111,7 @@ void GBasicTextureObject::render()
 	}
 
 #ifdef _DEBUG
-	throwError("GBasicTextureObject::render():\n");
+	throwError("GBasicTextureObject::render():\n"+ typeid(this).hash_code());
 #endif // _DEBUG
 
 }
@@ -134,7 +134,7 @@ void GBasicTextureObject::toggleRender(const glm::mat4 & model_matrix)
 	}
 
 #ifdef _DEBUG
-	throwError("GBasicTextureObject::toggleRender():\n");
+	throwError("GBasicTextureObject::toggleRender():\n"+ typeid(this).hash_code());
 #endif // _DEBUG
 }
 
@@ -178,7 +178,7 @@ inline void GBasicTextureObject::wireframeRender()
 
 inline void GBasicTextureObject::shadowCalculationRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -201,7 +201,7 @@ inline void GBasicTextureObject::reflectionCalculationRender()
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*GModel*reflectionMatrix;
+	mvp = reflectionMatrix*GModel;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 
@@ -255,7 +255,7 @@ inline void GBasicTextureObject::wireframeToggleRender(const glm::mat4 & model)
 
 inline void GBasicTextureObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -308,7 +308,7 @@ Texture GBasicTextureObject::initTexture(const string & path)
 	glBindTexture(texture.target, 0);
 
 #ifdef _DEBUG	
-	throwError("GStaticObject::initTexture():\n");
+	throwError("GBasicTextureObject::initTexture():\n" );
 #endif
 	return texture;
 }
@@ -339,6 +339,6 @@ void GBasicTextureObject::debugRender()
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
-	throwError("GDefaultSplatObject::debugRender():");
+	throwError("GBasicTextureObject::debugRender():"+ typeid(this).hash_code());
 }
 #endif

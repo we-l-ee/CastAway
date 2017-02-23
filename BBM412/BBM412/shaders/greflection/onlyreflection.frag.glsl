@@ -86,9 +86,13 @@ vec3 directLightCalculations(vec3 color);
 vec3 pointLightCalculations(vec3 color);
 vec3 spotLightCalculations(vec3 color);
 
+in vec4 clipspace;
 
 void main(void) {
-	vec3 color = vec3(texture(diffuse, texCoord).xyz);
+	vec3 color = vec3(texture(diffuse, 
+	//texCoord
+	(clipspace.xy/clipspace.w)*0.5 +0.5
+	).xyz);
 
 	vec3 result;
 	result = pointLightCalculations(color);

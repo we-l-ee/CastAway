@@ -7,6 +7,13 @@
 #include "SpotLight.h"
 
 #include "glm\ext.hpp"
+struct GDefaultSplatCI {
+	GLuint vao, vbo;
+	glm::vec3 m_specular;
+	GLfloat shininess;
+	vector<Texture> textures;
+	unsigned int points_size;
+};
 
 class GDefaultSplatObject:
 	virtual public GObject
@@ -24,7 +31,6 @@ protected:
 
 	glm::vec3 m_specular;
 	GLfloat shininess;
-	GLuint buffer;
 
 	vector<Texture> textures;
 	vector<Texture> defaultTextures;

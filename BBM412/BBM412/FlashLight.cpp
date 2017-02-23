@@ -65,7 +65,7 @@ void FlashLight::render()
 
 void FlashLight::toggleRender(const glm::mat4 & matrix)
 {
-	
+
 }
 
 glm::mat4 FlashLight::getLightViewMatrix()

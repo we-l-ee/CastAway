@@ -7,6 +7,7 @@ class GameObject
 	static bool day;
 
 protected:
+	glm::vec3 g_position;//center of the objects.
 
 	static const Camera *camera;// Current Camera that views GameObjects.
 	static glm::vec3 WorldUp;// Up direction of world. Negatif of this is gravity direction.
@@ -18,9 +19,12 @@ public:
 	static void setDegreeOfDay( const double & degree);
 	static void initialize(const Camera * cam, const glm::vec3 & _worldUp = glm::vec3{ 0.0f,1.0f,0.0f }, const unsigned int duration = 5);
 
-	static void stepSimulation( const double & _step );
-
+	static void setSimulationStep( const double & _step );
 	static bool isDay();
+
+	virtual void stepSimulation() {}
+
+	glm::vec3 getPosition() const;
 	~GameObject();
 };
 

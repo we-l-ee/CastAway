@@ -1,6 +1,7 @@
 #pragma once
 #include "GObject.h"
-#include "Moveable.h"
+#include "ReflectionMapper.h"
+
 #include "Camera.h"
 #include "DirecLight.h"
 #include "PointLight.h"
@@ -9,7 +10,7 @@
 #include "glm\ext.hpp"
 
 class GMapRObject:
-	virtual public GObject
+	virtual public GObject, public ReflectionMapper
 {
 
 
@@ -78,6 +79,10 @@ public:
 	// Inherited via GObject
 	virtual void debugRender() override;
 #endif // _DEBUG
+
+
+	// Inherited via ReflectionMapper
+	virtual glm::vec3 getReflectionNormal() override;
 
 };
 

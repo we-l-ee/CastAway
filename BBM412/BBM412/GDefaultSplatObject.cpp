@@ -148,7 +148,7 @@ void GDefaultSplatObject::render()
 
 	}
 #ifdef _DEBUG
-	throwError("GDefaultSplatObject::render():\n");
+	throwError("GDefaultSplatObject::render():\n" + to_string(typeid(this).hash_code()));
 #endif
 }
 
@@ -172,7 +172,7 @@ void GDefaultSplatObject::toggleRender(const glm::mat4 & model)
 	}
 
 #ifdef _DEBUG
-	throwError("GDefaultSplatObject::toggleRender():\n");
+	throwError("GDefaultSplatObject::toggleRender():" + to_string(typeid(this).hash_code()) + "\n" );
 #endif // _DEBUG
 }
 
@@ -303,7 +303,7 @@ inline void GDefaultSplatObject::wireframeRender()
 inline void GDefaultSplatObject::shadowCalculationRender()
 {
 
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -316,7 +316,7 @@ inline void GDefaultSplatObject::shadowCalculationRender()
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
 #ifdef _DEBUG
-	throwError("shadowCalculationRender::render():\n");
+	throwError("GDefaultSplatObject::shadowCalculationRender:" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 
 }
@@ -330,7 +330,7 @@ inline void GDefaultSplatObject::reflectionCalculationRender()
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*GModel*reflectionMatrix;
+	mvp = reflectionMatrix*GModel;
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -421,7 +421,7 @@ inline void GDefaultSplatObject::wireframeToggleRender(const glm::mat4 & model)
 
 inline void GDefaultSplatObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -473,7 +473,6 @@ void GDefaultSplatObject::debugRender()
 	//glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniform_buffers[0]);
 	//glBindBufferBase(GL_UNIFORM_BUFFER, 1, uniform_buffers[1]);
 	//glBindBufferBase(GL_UNIFORM_BUFFER, 2, uniform_buffers[2]);
-	throwError("GDefaultSplatObject::render()5:\n");
 
 	glUniform1i(120, GObject::nums_uniform_buffers[0]);
 	glUniform1i(121, GObject::nums_uniform_buffers[1]);
@@ -493,7 +492,6 @@ void GDefaultSplatObject::debugRender()
 		text++;
 	}
 
-	throwError("GDefaultSplatObject::render()3:\n");
 
 	glUniformMatrix4fv(13, 1, GL_FALSE, glm::value_ptr(lightViewProj));
 	glUniform1i(130, 0);
@@ -502,7 +500,6 @@ void GDefaultSplatObject::debugRender()
 	glm::mat4 mv;
 	glm::mat3 normal_mv;
 
-	throwError("GDefaultSplatObject::render()2:\n");
 
 	mvp = debug_viewProj*GModel;
 	mv = debug_view*GModel;
@@ -513,12 +510,10 @@ void GDefaultSplatObject::debugRender()
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 	glUniformMatrix4fv(11, 1, GL_FALSE, glm::value_ptr(mv));
 	//glUniformMatrix4fv(12, 1, GL_FALSE, glm::value_ptr(normal_mv));
-	throwError("GDefaultSplatObject::render()1:\n");
 
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
-	throwError("GDefaultSplatObject::debugRender():");
 
 }
 #endif
@@ -540,7 +535,7 @@ void GDefaultSplatObject::initialize()
 	glUniformBlockBinding(program, uniform_index[2], 2);
 
 #ifdef _DEBUG
-	throwError("GDefaultSplatObject::render():\n");
+	throwError("GDefaultSplatObject::initialize():\n");
 #endif // _DEBUG
 
 

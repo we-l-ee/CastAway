@@ -19,8 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="DataInitException.cpp" />
     <ClCompile Include="DefaultDynamicObject.cpp" />
     <ClCompile Include="DefaultStaticObject.cpp" />
     <ClCompile Include="DirecLight.cpp" />
@@ -57,7 +59,9 @@
     <ClCompile Include="pObject.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="RedRock.cpp" />
+    <ClCompile Include="ReflectionMapper.cpp" />
     <ClCompile Include="Seon.cpp" />
+    <ClCompile Include="ShadowMapper.cpp" />
     <ClCompile Include="Sky.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="StaticDefaultSplatObject.cpp" />
@@ -70,8 +74,10 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="DataInitException.h" />
     <ClInclude Include="DefaultDynamicObject.h" />
     <ClInclude Include="DefaultStaticObject.h" />
     <ClInclude Include="DirecLight.h" />
@@ -108,8 +114,10 @@
     <ClInclude Include="pObject.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RedRock.h" />
+    <ClInclude Include="ReflectionMapper.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Seon.h" />
+    <ClInclude Include="ShadowMapper.h" />
     <ClInclude Include="Sky.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="StaticDefaultSplatObject.h" />

@@ -5,6 +5,8 @@
 
 #include <algorithm>
 
+#include "ShadowMapper.h"
+
 #include "GameObject.h"
 
 #include "GMapAObject.h"
@@ -44,6 +46,10 @@
 #include "Bullet\include\LinearMath\btVector3.h"
 
 #include "stddef.hpp"
+enum BUTTONS {
+	KEY_W, KEY_A, KEY_S, KEY_D, 
+	KEY_Q, KEY,E
+};
 
 enum BUTTON_STATES {
 	RELEASE,	
@@ -67,7 +73,6 @@ class World
 	btDefaultCollisionConfiguration* collisionConfiguration;
 	btBroadphaseInterface* broadphase;
 
-	vector< shared_ptr< GObject > > objects;
 
 	shared_ptr<Sun> sun;
 	shared_ptr<FlashLight> flashLight;
@@ -82,6 +87,14 @@ class World
 	Light* pickedLight;
 	vector< Moveable* > toggled_objs;
 
+	vector< shared_ptr< GObject > > objects;
+
+	vector< shared_ptr<GObject> > scene_objects;
+	vector< shared_ptr<GObject> > shadow_rendered_objects;
+	vector< pair<bool, shared_ptr<GObject> > > maybe_rendered;
+
+	vector< shared_ptr<ShadowMapper> > shadow_casters;
+	//vector< shared_ptr<ReflectionMapper> > reflection_objects;
 
 	vector< shared_ptr<DefaultDynamicObject> > dynamic_objects;
 	vector< shared_ptr<DefaultStaticObject> > static_objects;

@@ -22,14 +22,19 @@ using namespace std;
 
 class GObject : public virtual GameObject
 {
+public:
+	enum g_program_t {WIREFRAME, BASIC, TEXTURE, CLIPPED_BASIC, CLIPPED_TEXTURE, SHADOW_CALC, PROGRAM_SIZE};
 private:
-private:
-
+#ifdef _DEBUG
+	string d_identity;
+#endif
 	static GLuint compileShader(const char * file, GLenum type);
 
 protected:
 	glm::vec4 wireframeColor{ 1,0,0,1 };
 	static glm::mat4 reflectionMatrix;
+	static glm::vec4 clipPlane;
+
 
 	static glm::mat4 lightView;
 	static glm::mat4 lightViewProj;
@@ -46,8 +51,8 @@ protected:
 #endif
 	static GLuint sunShadowMap;
 
-	static GLuint GProgram[(int)RenderMode::SIZE];
-	static GLuint VAO[(int)RenderMode::SIZE];
+	static GLuint GProgram[PROGRAM_SIZE];
+	static GLuint VAO[PROGRAM_SIZE];
 
 	enum {DIRECTLIGHT,POINTLIGHT,SPOTLIGHT,UNIFORM_BUFFER_SIZE};
 	static GLuint uniform_buffers[UNIFORM_BUFFER_SIZE];
@@ -75,6 +80,9 @@ public:
 	glm::vec4 getWireframeColor();
 
 #ifdef _DEBUG
+	void d_setObjectIdentity(const string & identity);
+	string d_getObjectIdentity();
+
 	virtual void debugRender() = 0;
 	static void setDebugViewMatrix(const glm::mat4 & mat);
 	static void setDebugViewProjMatrix(const glm::mat4 & view, const glm::mat4 & proj);
@@ -106,12 +114,19 @@ public:
 	static void setSunViewMatrix(const glm::mat4 & view, const glm::mat4 & proj);
 	static void setSpotlightViewMatrix(const glm::mat4 & view, const glm::mat4 & proj);
 
-	static void setReflectionMatrix(const glm::mat4 & _reflectionMatrix);
+	static void setReflectionMatrix(const glm::mat4 & _reflectionMatrix, const glm::mat4 & _reflectionView, const glm::mat4 & _reflectionProj,
+		const glm::vec4 & _clipPlane);
 
 	static void setAvaibleTextureUnit(const unsigned int & text_unit);
 	static unsigned int getAvaibleTextureUnit();
 
-	static void GObject::readObjectFile(string file,
+
+
+	static void calculateTBN( const vector<glm::vec3> & points, const vector<glm::vec2> & uv, const vector<glm::vec3> & normals);
+
+
+
+	static void readObjectFile(string file,
 		vector<glm::vec3> &points);
 
 	static void GObject::readObjectFile(string file,
@@ -128,6 +143,10 @@ public:
 		vector<glm::vec3> &points, vector<glm::vec2> &text_cords, vector<glm::vec3> &normals, 
 		vector<string> & texture_names, vector<unsigned int> & switch_points
 	);
+
+
+
+
 	static void GObject::readObjectFile(string file,
 		vector<glm::vec3> &points, vector<glm::vec2> &text_cords, vector<glm::vec3> &normals,
 		Mesh &faces,

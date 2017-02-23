@@ -36,7 +36,7 @@ GDefaultMultiTextureObject::GDefaultMultiTextureObject(const string & sub, const
 	const GLfloat & _shininess, const GLuint & _prog) : GObject(glm::translate(dis)), m_specular(_m_specular), shininess(_shininess), current_program(_prog)
 {
 #ifdef _DEBUG
-	throwError("GDefaultObject()[enter]:" + obj + "\n");
+	throwError("GDefaultMultiTextureObject()[enter]:" + obj + "\n");
 #endif
 	stringstream ss;
 
@@ -106,25 +106,13 @@ GDefaultMultiTextureObject::GDefaultMultiTextureObject(const GLuint & _vbo, cons
 
 void GDefaultMultiTextureObject::render()
 {
+	glDisable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+
 	switch (renderMode) {
 
 	case RenderMode::DEFAULT:
-		if (ALPHA)
-		{
-
-		glDisable(GL_BLEND);
-		glEnable(GL_ALPHA_TEST);
 		defaultRender();
-		glDisable(GL_ALPHA_TEST);
-		glEnable(GL_BLEND);
-
-		glDepthMask(GL_FALSE);
-		defaultRender();
-		glDepthMask(GL_TRUE);
-
-		}
-		else
-			defaultRender();
 		break;
 	case RenderMode::BASIC_TEXTURE:
 		basicTextureRender();
@@ -140,15 +128,20 @@ void GDefaultMultiTextureObject::render()
 		break;
 
 	}
+	glDisable(GL_ALPHA_TEST);
+	glEnable(GL_BLEND);
 
 #ifdef _DEBUG
-	throwError("GDefaultMultiTextureObject::render():\n");
+	throwError("GDefaultMultiTextureObject::render():" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 
 }
 
 void GDefaultMultiTextureObject::toggleRender(const glm::mat4 & model_matrix)
 {
+	glDisable(GL_BLEND);
+	glEnable(GL_ALPHA_TEST);
+
 	switch (renderMode) {
 
 	case RenderMode::DEFAULT:
@@ -163,11 +156,14 @@ void GDefaultMultiTextureObject::toggleRender(const glm::mat4 & model_matrix)
 	case RenderMode::SHADOW_CALC:
 		shadowCalculationToggleRender(model_matrix);
 		break;
-
+	case RenderMode::REFLECTION_CALC:
+		reflectionCalculationToggleRender(model_matrix);
+		break;
 	}
-
+	glDisable(GL_ALPHA_TEST);
+	glEnable(GL_BLEND);
 #ifdef _DEBUG
-	throwError("GDefaultObject::toggleRender():\n");
+	throwError("GDefaultObject::toggleRender():" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 }
 
@@ -345,7 +341,7 @@ inline void GDefaultMultiTextureObject::wireframeRender()
 inline void GDefaultMultiTextureObject::shadowCalculationRender()
 {
 
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -358,21 +354,21 @@ inline void GDefaultMultiTextureObject::shadowCalculationRender()
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
 #ifdef _DEBUG
-	throwError("shadowCalculationRender::render():\n");
+	throwError("GDefaultMultiTextureObject::shadowCalculationRender():" + d_getObjectIdentity() + "\n");
 #endif // _DEBUG
 
 }
 
 inline void GDefaultMultiTextureObject::reflectionCalculationRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(GProgram[TEXTURE]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*GModel*reflectionMatrix;
+	mvp = reflectionMatrix*GModel;
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -459,7 +455,7 @@ inline void GDefaultMultiTextureObject::basicTextureToggleRender(const glm::mat4
 
 inline void GDefaultMultiTextureObject::wireframeToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[WIREFRAME]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -478,7 +474,7 @@ inline void GDefaultMultiTextureObject::wireframeToggleRender(const glm::mat4 & 
 
 inline void GDefaultMultiTextureObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -494,14 +490,14 @@ inline void GDefaultMultiTextureObject::shadowCalculationToggleRender(const glm:
 
 inline void GDefaultMultiTextureObject::reflectionCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(GProgram[TEXTURE]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getProjMatrix()*model*reflectionMatrix;
+	mvp = reflectionMatrix*GModel;
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -577,7 +573,7 @@ void GDefaultMultiTextureObject::debugRender()
 	}
 
 #ifdef _DEBUG
-	throwError("GDefaultObject::debugRender():");
+	throwError("GDefaultObject::debugRender():" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 
 }

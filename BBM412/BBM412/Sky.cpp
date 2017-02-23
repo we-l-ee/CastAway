@@ -11,7 +11,7 @@ Sky::Sky(const glm::vec3 & displacement) : GTiledTextureObject(VBO, VAO, POINTS_
 
 void Sky::render()
 {
-	GModel = glm::translate(camera->getPosition());
+	//GModel = glm::translate(camera->getPosition());
 	if(isDay()){	setTexture(DAY); setTiling(1.0f);	}
 	else { setTexture(NIGHT); setTiling(4.0f); }
 

@@ -15,6 +15,7 @@ smooth out vec2 texCoord;
 
 out vec3 sunSpaceCoord;
 out vec3 spotSpaceCoord;
+out vec4 clipspace;
 
 void main(void) {
 	Position = vec3( MV*vec4(vertex,1.0f) );
@@ -26,8 +27,9 @@ void main(void) {
 
 	ss = (spotViewProjMatrix*vec4(vertex.xyz, 1.0));
 	spotSpaceCoord = (vec3(ss.xyz) / ss.w + 1) / 2;
-	gl_Position = MVP*vec4(vertex, 1.0f);
-	
+	clipspace = MVP*vec4(vertex, 1.0f);
+	gl_Position =clipspace;
+
 	texCoord = (gl_Position.xy/gl_Position.w) /2 + 0.5;
 
 }

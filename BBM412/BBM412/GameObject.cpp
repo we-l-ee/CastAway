@@ -27,7 +27,7 @@ void GameObject::initialize(const Camera * cam, const glm::vec3 & _worldUp, cons
 	day = true;
 }
 
-void GameObject::stepSimulation(const double & _step)
+void GameObject::setSimulationStep(const double & _step)
 {
 	step = _step;
 	degreeOfDay += (step * 360) / duration;
@@ -40,6 +40,11 @@ void GameObject::stepSimulation(const double & _step)
 bool GameObject::isDay()
 {
 	return day;
+}
+
+glm::vec3 GameObject::getPosition() const
+{
+	return g_position;
 }
 
 GameObject::~GameObject()

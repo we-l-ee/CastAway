@@ -38,7 +38,7 @@ public:
 	void getWorldUpRay(float to, btVector3 & start, btVector3 & end);
 
 	//glm::mat4 getReflectedView( const glm::vec3 & normal );
-	//glm::mat4 getSeaReflectedView();
+	glm::mat4 getSeaReflectedView();
 
 	glm::mat4 getViewMatrix() const;
 	glm::mat4 getProjMatrix()	const;

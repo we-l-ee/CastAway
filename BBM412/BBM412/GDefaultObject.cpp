@@ -199,7 +199,7 @@ void GDefaultObject::render()
 	}
 
 #ifdef _DEBUG
-	throwError("GDefaultObject::render():\n");
+	throwError("GDefaultObject::render():" + d_getObjectIdentity() + "\n");
 #endif // _DEBUG
 
 }
@@ -224,7 +224,7 @@ void GDefaultObject::toggleRender(const glm::mat4 & model_matrix)
 	}
 
 #ifdef _DEBUG
-	throwError("GDefaultObject::toggleRender():\n");
+	throwError("GDefaultObject::toggleRender():" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 }
 
@@ -273,7 +273,9 @@ inline void GDefaultObject::defaultRender()
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
-
+#ifdef _DEBUG
+	throwError("GDefaultObject::defaultRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 }
 
 inline void GDefaultObject::basicTextureRender()
@@ -319,7 +321,7 @@ inline void GDefaultObject::wireframeRender()
 inline void GDefaultObject::shadowCalculationRender()
 {
 
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -332,21 +334,21 @@ inline void GDefaultObject::shadowCalculationRender()
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
 #ifdef _DEBUG
-	throwError("shadowCalculationRender::render():\n");
+	throwError("GDefaultObject::shadowCalculationRender():" + d_getObjectIdentity() + "\n");
 #endif // _DEBUG
 
 }
 
 inline void GDefaultObject::reflectionCalculationRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(GProgram[TEXTURE]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glm::mat4 mvp;
 
 
-	mvp = GObject::camera->getViewProjMatrix()*GModel*reflectionMatrix;
+	mvp = reflectionMatrix*GModel;
 
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -357,6 +359,9 @@ inline void GDefaultObject::reflectionCalculationRender()
 	glUniform1i(100, nextAvaibleTextureUnit);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
+#ifdef _DEBUG
+	throwError("GDefaultObject::reflectionCalculationRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 }
 
 inline void GDefaultObject::defaultToggleRender(const glm::mat4 & model)
@@ -440,7 +445,7 @@ inline void GDefaultObject::wireframeToggleRender(const glm::mat4 & model)
 
 inline void GDefaultObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -494,7 +499,7 @@ Texture GDefaultObject::initTexture(const string & path)
 
 	return texture;
 #ifdef _DEBUG	
-	throwError("GStaticObject::initTexture():\n");
+	throwError("GDefaultObject::initTexture():\n");
 #endif
 
 }
@@ -560,7 +565,7 @@ void GDefaultObject::debugRender()
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
 #ifdef _DEBUG
-	throwError("GDefaultObject::debugRender():");
+	throwError("GDefaultObject::debugRender():" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 
 }

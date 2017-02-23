@@ -31,9 +31,6 @@ World::World(unsigned int screen_width, unsigned int screen_height) :
 	GLuint attachments[1] = { GL_COLOR_ATTACHMENT0};
 	glDrawBuffers(1, attachments);
 
-	GObject::setReflectionMatrix(glm::scale(glm::vec3{ 1.0f,-1.0f,1.0f })
-		//*glm::translate( glm::vec3{0,-20,0} )
-	);
 #ifdef _DEBUG
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		throw GException("Framebuffer reflection one not complete!");
@@ -123,8 +120,8 @@ inline void World::initializeAll()
 inline void World::createObjects()
 {
 	objects.emplace_back(new Sky(glm::vec3{ 0,-40,0 }));
-	//ocean.reset(new GMapRObject("ocean"));	ocean->setReflectionTexture(Texture{ GL_TEXTURE_2D, reflectionTexture });
-	//objects.push_back(ocean);
+	ocean.reset(new GMapRObject("lake", glm::vec3{ 40,0,10 }));	ocean->setReflectionTexture(Texture{ GL_TEXTURE_2D, reflectionTexture });
+	objects.push_back(ocean);
 
 	sun = shared_ptr<Sun>(new Sun());
 	sun->shadowMappingInitialize(4096, 4096);
@@ -145,7 +142,7 @@ inline void World::createObjects()
 
 	objects.emplace_back(new Log(glm::vec3{ 40, heightOf(40, -20) ,-20 }, glm::vec3{ 2.0f }));
 
-	objects.emplace_back(	new GMapAObject("fern", glm::vec3{ 50, heightOf(50, 50) ,50 } )		);
+	objects.emplace_back(	new GMapAObject("fern", glm::vec3{ 50, heightOf(50, 50) ,50 } )	);
 	objects.emplace_back(	new Fern(glm::vec3{ 55, heightOf(55, 50) ,50 }, glm::vec3{ 3.0f }));
 	objects.emplace_back(	new Fern(glm::vec3{ 20, heightOf(20, -40) ,-40 }, glm::vec3{ 6.8f }));
 	objects.emplace_back(	new Fern(glm::vec3{ 22, heightOf(22, 41) ,41 }, glm::vec3{ 6.0f }));
@@ -180,6 +177,11 @@ inline void World::createObjects()
 	lights.push_back(static_pointer_cast<Light>(flashLight));
 
 #ifdef _DEBUG
+	for(int i =0; i < objects.size(); i++)
+	{
+		objects[i]->d_setObjectIdentity(typeid(*objects[i]).name() + to_string(i) );
+		cout << "Object number:" << i << "\t" << objects[i]-> d_getObjectIdentity() << endl;
+	}//typeid( this ).hash_code()
 	GObject::throwError("World::createObjects():\n");
 #endif
 }
@@ -360,6 +362,7 @@ inline void World::bloomRender()
 
 inline void World::shadowRender()
 {
+	//glEnable(GL_ALPHA_TEST);
 	glPolygonOffset(0.5, 0.1);
 
 	GObject::setRenderMode(RenderMode::SHADOW_CALC);
@@ -375,6 +378,7 @@ inline void World::shadowRender()
 
 
 	GObject::setRenderMode(renderMode);
+	//glDisable(GL_ALPHA_TEST);
 
 }
 
@@ -384,6 +388,7 @@ inline void World::reflectionRender()
 	glBindFramebuffer(GL_FRAMEBUFFER, reflectionFBO);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	GObject::setRenderMode(RenderMode::REFLECTION_CALC);
+	GObject::setReflectionMatrix(glm::scale(glm::vec3{ 1,-1,1 }), player->getSeaReflectedView(), player->getProjMatrix(), glm::vec4{ 0,0,0,0 });
 	allRender();
 	GObject::setRenderMode(renderMode);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -429,7 +434,7 @@ inline void World::allRender()
 
 inline void World::stepSimulation(const double & deltaTime)
 {
-	GameObject::stepSimulation(deltaTime);
+	GameObject::setSimulationStep(deltaTime);
 	player->stepSimulation(deltaTime);
 	dynamicsWorld->stepSimulation(deltaTime);
 
@@ -465,13 +470,13 @@ void World::render(const double & deltaTime)
 
 if (debugRenderOn)
 {
-	/*flashLight->setNoRender(true);
+	flashLight->setNoRender(true);
 
 	calculateDebugView();
 	for (auto o : objects)
 		o->debugRender();
 
-	flashLight->setNoRender(false);*/
+	flashLight->setNoRender(false);
 
 
 
@@ -480,7 +485,7 @@ else
 {
 #endif
 
-	//reflectionRender();
+	reflectionRender();
 	shadowRender();
 	bloomRender();
 
@@ -1130,11 +1135,13 @@ void World::calculateDebugView()
 	switch (debugView)
 	{
 	case 0:
-		GObject::setDebugViewProjMatrix(sun->getLightViewMatrix(), sun->getLightProjMatrix());
+		GObject::setDebugViewProjMatrix(player->getSeaReflectedView(), player->getProjMatrix());
 		break;
 	case 1:
+		GObject::setDebugViewProjMatrix(sun->getLightViewMatrix(), sun->getLightProjMatrix());
+		break;
+	case 2:
 		GObject::setDebugViewProjMatrix(flashLight->getLightViewMatrix(), flashLight->getLightProjMatrix());
-
 		break;
 	}
 }
@@ -1146,6 +1153,9 @@ void World::loopDebugView()
 		debugView = 1;
 		break;
 	case 1:
+		debugView = 2;
+		break;
+	case 2:
 		debugView = 0;
 		break;
 	}

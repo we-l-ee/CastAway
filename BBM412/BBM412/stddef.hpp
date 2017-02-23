@@ -228,7 +228,37 @@ struct alignas(sizeof(glm::vec4))DirecLightData {
 
 	{}
 };
+struct alignas(sizeof(glm::vec4))ShadowDirecLightData {
 
+	alignas(sizeof(glm::vec4))glm::vec3 direction;
+	alignas(sizeof(glm::vec4))glm::vec3 color;
+
+	alignas(sizeof(glm::vec4))glm::vec3 ambient;
+	alignas(sizeof(glm::vec4))glm::vec3 diffuse;
+	alignas(sizeof(glm::vec4))glm::vec3 specular;
+
+	glm::mat4 viewProj = {};
+	GLuint shadowMap = {};
+
+	ShadowDirecLightData(
+		glm::vec3 _direction,
+		glm::vec3 _color,
+
+		glm::vec3 _ambient = glm::vec3{ 0.2f, 0.2f, 0.2f },
+		glm::vec3 _diffuse = glm::vec3{ 0.4f, 0.4f, 0.4f },
+		glm::vec3 _specular = glm::vec3{ 1.0f, 1.0f, 1.0f }
+
+	) :
+		direction(_direction),
+		color(_color),
+
+		ambient(_ambient),
+		diffuse(_diffuse),
+		specular(_specular)
+
+
+	{}
+};
 struct alignas(sizeof(glm::vec4))PointLightData {
 
 	alignas(sizeof(glm::vec4))glm::vec3 position;
@@ -289,6 +319,60 @@ struct alignas(sizeof(glm::vec4))SpotLightData {
 	GLfloat quadratic;
 
 	SpotLightData(
+		glm::vec3 _position,
+		glm::vec3 _direction,
+		glm::vec3 _color,
+
+		GLfloat _cutOff = { glm::cos(glm::radians(12.5f)) },
+		GLfloat _outerCutOff = { glm::cos(glm::radians(15.0f)) },
+
+		glm::vec3 _ambient = glm::vec3{ 0.2f, 0.2f, 0.2f },
+		glm::vec3 _diffuse = glm::vec3{ 0.8f, 0.8f, 0.8f },
+		glm::vec3 _specular = glm::vec3{ 1.0f, 1.0f, 1.0f },
+
+
+		GLfloat _constant = GLfloat{ 1.0f },
+		GLfloat	_linear = GLfloat{ 0.09f },
+		GLfloat _quadratic = GLfloat{ 0.032f }
+	) :
+		position(_position),
+		direction(_direction),
+		color(_color),
+
+		ambient(_ambient),
+		diffuse(_diffuse),
+		specular(_specular),
+
+		cutOff(_cutOff),
+		outerCutOff(_outerCutOff),
+
+		constant(_constant),
+		linear(_linear),
+		quadratic(_quadratic)
+	{}
+
+};
+
+struct alignas(sizeof(glm::vec4))ShadowSpotLightData {
+	alignas(sizeof(glm::vec4))glm::vec3 position;
+	alignas(sizeof(glm::vec4))glm::vec3 direction;
+	alignas(sizeof(glm::vec4))glm::vec3 color;
+
+	alignas(sizeof(glm::vec4))glm::vec3 ambient;
+	alignas(sizeof(glm::vec4))glm::vec3 diffuse;
+	alignas(sizeof(glm::vec4))glm::vec3 specular;
+
+	glm::mat4 viewProj = {};
+	GLuint shadowMap = {};
+
+	GLfloat cutOff;
+	GLfloat outerCutOff;
+
+	GLfloat constant;
+	GLfloat	linear;
+	GLfloat quadratic;
+
+	ShadowSpotLightData(
 		glm::vec3 _position,
 		glm::vec3 _direction,
 		glm::vec3 _color,

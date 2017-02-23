@@ -61,6 +61,12 @@
     <Filter Include="Header Files\Exceptions">
       <UniqueIdentifier>{36729bcd-ae54-4cac-83c8-476058fde86c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mappers">
+      <UniqueIdentifier>{a7d4b5de-de9c-473e-8a35-5c82302c716a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mappers">
+      <UniqueIdentifier>{1bcc98dc-7fc9-41fa-81de-a52661b703d6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SpotLight.cpp">
@@ -210,6 +216,18 @@
     <ClCompile Include="RedRock.cpp">
       <Filter>Source Files\Specilized Classes</Filter>
     </ClCompile>
+    <ClCompile Include="ReflectionMapper.cpp">
+      <Filter>Source Files\Mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapper.cpp">
+      <Filter>Source Files\Mappers</Filter>
+    </ClCompile>
+    <ClCompile Include="DataInitException.cpp">
+      <Filter>Source Files\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -350,16 +368,28 @@
     <ClInclude Include="MapleTree.h">
       <Filter>Header Files\Specilized Classes</Filter>
     </ClInclude>
-    <ClInclude Include="PineTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GreyRock.h">
       <Filter>Header Files\Specilized Classes</Filter>
     </ClInclude>
+    <ClInclude Include="PineTree.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
     <ClInclude Include="RedRock.h">
+      <Filter>Header Files\Specilized Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapper.h">
+      <Filter>Mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionMapper.h">
+      <Filter>Mappers</Filter>
+    </ClInclude>
+    <ClInclude Include="DataInitException.h">
+      <Filter>Header Files\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

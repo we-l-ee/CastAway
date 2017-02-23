@@ -160,7 +160,7 @@ void GTiledTextureObject::render()
 	}
 
 #ifdef _DEBUG
-	throwError("GTiledTextureObject::render():\n");
+	throwError("GTiledTextureObject::render():" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 
 }
@@ -183,7 +183,7 @@ void GTiledTextureObject::toggleRender(const glm::mat4 & model_matrix)
 	}
 
 #ifdef _DEBUG
-	throwError("GTiledTextureObject::toggleRender():\n");
+	throwError("GTiledTextureObject::toggleRender():" + to_string(typeid(this).hash_code()) + "\n");
 #endif // _DEBUG
 }
 
@@ -216,7 +216,7 @@ inline void GTiledTextureObject::defaultRender()
 
 inline void GTiledTextureObject::wireframeRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[WIREFRAME]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -234,7 +234,7 @@ inline void GTiledTextureObject::wireframeRender()
 
 inline void GTiledTextureObject::shadowCalculationRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -295,7 +295,7 @@ inline void GTiledTextureObject::defaultToggleRender(const glm::mat4 & model)
 
 inline void GTiledTextureObject::wireframeToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -313,7 +313,7 @@ inline void GTiledTextureObject::wireframeToggleRender(const glm::mat4 & model)
 
 inline void GTiledTextureObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -377,6 +377,6 @@ void GTiledTextureObject::debugRender()
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
-	throwError("GDefaultSplatObject::debugRender():");
+	throwError("GTiledTextureOBject::debugRender():" + to_string(typeid(this).hash_code()) + "\n");
 }
 #endif

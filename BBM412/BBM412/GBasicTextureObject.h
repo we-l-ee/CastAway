@@ -51,14 +51,14 @@ public:
 	void setDefaultTexture();
 
 
-	GBasicTextureObject(const string & obj, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
-	GBasicTextureObject(const string & obj, const glm::vec3 & dis, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
-	GBasicTextureObject(const string & sub, const string & obj, const glm::vec3 & dis, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
+	GBasicTextureObject(const string & obj, const GLuint & _prog = GObject::GProgram[TEXTURE]);
+	GBasicTextureObject(const string & obj, const glm::vec3 & dis, const GLuint & _prog = GObject::GProgram[TEXTURE]);
+	GBasicTextureObject(const string & sub, const string & obj, const glm::vec3 & dis, const GLuint & _prog = GObject::GProgram[TEXTURE]);
 
 
-	GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const Texture texture, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
+	GBasicTextureObject(const GLuint & vbo, const GLuint & vao, const unsigned int & _points_size, const Texture texture, const GLuint & _prog = GObject::GProgram[TEXTURE]);
 	GBasicTextureObject(const GLuint & _vbo, const GLuint & _vao, const unsigned int & _points_size, const Texture _texture, 
-		const glm::vec3 & displacement, const GLuint & _prog = GObject::GProgram[(GLuint)RenderMode::BASIC_TEXTURE]);
+		const glm::vec3 & displacement, const GLuint & _prog = GObject::GProgram[TEXTURE]);
 
 	static void construct(const string & sub, const string &obj, GLuint & vbo, GLuint & vao, unsigned int & points_size, Texture & texture);
 

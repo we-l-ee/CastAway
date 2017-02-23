@@ -12,6 +12,7 @@
 
 using namespace std;
 glm::mat4 GObject::reflectionMatrix;
+glm::vec4 GObject::clipPlane;
 
 glm::mat4 GObject::lightView;
 glm::mat4 GObject::lightViewProj;
@@ -27,8 +28,8 @@ glm::mat4 GObject::spotViewProj;
 
 GLuint GObject::sunShadowMap;
 
-GLuint GObject::GProgram[(int)RenderMode::SIZE];
-GLuint GObject::VAO[(int)RenderMode::SIZE];
+GLuint GObject::GProgram[PROGRAM_SIZE];
+GLuint GObject::VAO[PROGRAM_SIZE];
 
 GLuint GObject::uniform_buffers[UNIFORM_BUFFER_SIZE];
 GLuint GObject::nums_uniform_buffers[UNIFORM_BUFFER_SIZE];
@@ -112,6 +113,17 @@ glm::vec4 GObject::getWireframeColor()
 {
 	return wireframeColor;
 }
+
+void GObject::d_setObjectIdentity(const string & identity)
+{
+	d_identity = identity;
+}
+
+string GObject::d_getObjectIdentity()
+{
+	return d_identity;
+}
+
 
 void GObject::setDebugViewMatrix(const glm::mat4 & mat)
 {
@@ -378,10 +390,11 @@ void GObject::throwError()
 
 void GObject::initialize( const vector<shared_ptr<PointLight>>* p_lights, const vector<shared_ptr<DirecLight>>* d_lights, const vector<shared_ptr<SpotLight>>* s_lights)
 {
-	GProgram[(int)RenderMode::WIREFRAME] = createProgram("shaders\\gobject\\basic.vert.glsl", "shaders\\gobject\\basic.frag.glsl");
-	GProgram[(int)RenderMode::BASIC_TEXTURE] = createProgram("shaders\\gobject\\basictexture.vert.glsl", "shaders\\gobject\\basictexture.frag.glsl");
+	GProgram[WIREFRAME] = createProgram("shaders\\gobject\\basic.vert.glsl", "shaders\\gobject\\basic.frag.glsl");
+	GProgram[TEXTURE] = createProgram("shaders\\gobject\\basictexture.vert.glsl", "shaders\\gobject\\basictexture.frag.glsl");
+	GProgram[CLIPPED_TEXTURE] = createProgram("shaders\\gobject\\clipped_texture_vert.glsl", "shaders\\gobject\\clipped_texture_frag.glsl");
 
-	GProgram[(int)RenderMode::SHADOW_CALC] = createProgram("shaders\\gobject\\onlydepth.vert.glsl", "shaders\\gobject\\onlydepth.frag.glsl");
+	GProgram[SHADOW_CALC] = createProgram("shaders\\gobject\\onlydepth.vert.glsl", "shaders\\gobject\\onlydepth.frag.glsl");
 
 	glGenBuffers(UNIFORM_BUFFER_SIZE, GObject::uniform_buffers);
 
@@ -482,9 +495,13 @@ void GObject::setSpotlightViewMatrix(const glm::mat4 & view, const glm::mat4 & p
 
 }
 
-void GObject::setReflectionMatrix(const glm::mat4 & _reflectionMatrix)
+void GObject::setReflectionMatrix(const glm::mat4 & _reflectionMatrix, const glm::mat4 & _reflectionView, const glm::mat4 & _reflectionProj,
+								  const glm::vec4 & _clipPlane )
 {
-	reflectionMatrix = _reflectionMatrix;
+	clipPlane = _clipPlane;
+	reflectionMatrix = _reflectionProj* _reflectionView
+		//;
+	*_reflectionMatrix;
 }
 
 void GObject::setAvaibleTextureUnit(const unsigned int & text_unit)
@@ -495,6 +512,39 @@ void GObject::setAvaibleTextureUnit(const unsigned int & text_unit)
 unsigned int GObject::getAvaibleTextureUnit()
 {
 	return nextAvaibleTextureUnit;
+}
+
+void GObject::calculateTBN(const vector<glm::vec3>& points, const vector<glm::vec2>& uv, const vector<glm::vec3>& normals)
+{
+	/*for (unsigned int i = 0; i < Indices.size(); i += 3) {
+		Vertex& v0 = Vertices[Indices[i]];
+		Vertex& v1 = Vertices[Indices[i + 1]];
+		Vertex& v2 = Vertices[Indices[i + 2]];
+
+		Vector3f Edge1 = v1.m_pos - v0.m_pos;
+		Vector3f Edge2 = v2.m_pos - v0.m_pos;
+
+		float DeltaU1 = v1.m_tex.x - v0.m_tex.x;
+		float DeltaV1 = v1.m_tex.y - v0.m_tex.y;
+		float DeltaU2 = v2.m_tex.x - v0.m_tex.x;
+		float DeltaV2 = v2.m_tex.y - v0.m_tex.y;
+
+		float f = 1.0f / (DeltaU1 * DeltaV2 - DeltaU2 * DeltaV1);
+
+		Vector3f Tangent, Bitangent;
+
+		Tangent.x = f * (DeltaV2 * Edge1.x - DeltaV1 * Edge2.x);
+		Tangent.y = f * (DeltaV2 * Edge1.y - DeltaV1 * Edge2.y);
+		Tangent.z = f * (DeltaV2 * Edge1.z - DeltaV1 * Edge2.z);
+
+		Bitangent.x = f * (-DeltaU2 * Edge1.x - DeltaU1 * Edge2.x);
+		Bitangent.y = f * (-DeltaU2 * Edge1.y - DeltaU1 * Edge2.y);
+		Bitangent.z = f * (-DeltaU2 * Edge1.z - DeltaU1 * Edge2.z);
+
+		v0.m_tangent += Tangent;
+		v1.m_tangent += Tangent;
+		v2.m_tangent += Tangent;
+	}*/
 }
 
 

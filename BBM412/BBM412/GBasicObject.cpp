@@ -18,11 +18,14 @@ inline void GBasicObject::defaultRender()
 	glUniform4fv(1, 1, &this->color[0]);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
+#ifdef _DEBUG
+	throwError("GBasicObject::defaultRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 }
 
 inline void GBasicObject::wireframeRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[WIREFRAME]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -35,12 +38,15 @@ inline void GBasicObject::wireframeRender()
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 	glUniform4fv(1, 1, &wireframeColor[0]);
 	glDrawArrays(GL_LINES, 0, points_size);
+#ifdef _DEBUG
+	throwError("GBasicObject::wireframeRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 
 }
 
 inline void GBasicObject::shadowCalculationRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -52,6 +58,9 @@ inline void GBasicObject::shadowCalculationRender()
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
+#ifdef _DEBUG
+	throwError("GBasicObject::shadowCalculationRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 }
 
 inline void GBasicObject::reflectionCalculationRender()
@@ -70,12 +79,15 @@ inline void GBasicObject::reflectionCalculationRender()
 	glUniform4fv(1, 1, &this->color[0]);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
+#ifdef _DEBUG
+	throwError("GBasicObject::reflectionCalculationRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 }
 
 
 inline void GBasicObject::defaultToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(current_program);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -90,7 +102,7 @@ inline void GBasicObject::defaultToggleRender(const glm::mat4 & model)
 
 inline void GBasicObject::wireframeToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[WIREFRAME]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -108,7 +120,7 @@ inline void GBasicObject::wireframeToggleRender(const glm::mat4 & model)
 
 inline void GBasicObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -140,6 +152,18 @@ inline void GBasicObject::reflectionCalculationToggleRender(const glm::mat4 & mo
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 }
 
+GBasicObject::GBasicObject(const GBasicCI & CInfo):
+	GBasicObject(CInfo, glm::vec3{0})
+{
+
+}
+
+GBasicObject::GBasicObject(const GBasicCI & CInfo, const glm::vec3 & translate):
+	vao(CInfo.vao), vbo(CInfo.vbo), color(CInfo.color), points_size(CInfo.points_size),
+	GObject(glm::translate(translate))
+{
+}
+
 GBasicObject::GBasicObject(const string & obj, const glm::vec4 & _color, const GLuint & _prog ):
 	GBasicObject(obj, obj,_color, glm::vec3(0.f), _prog ) 
 {
@@ -160,7 +184,7 @@ GBasicObject::GBasicObject(const string & sub, const string & obj, const glm::ve
 {
 	construct(sub, obj, vao, vbo, points_size);
 #ifdef _DEBUG
-	throwError("GBasicObject()[exit]:\n");
+	throwError("GBasicObject()[exit]:\n" + to_string(typeid(this).hash_code()));
 #endif
 }
 
@@ -225,7 +249,7 @@ void GBasicObject::render()
 	}
 
 #ifdef _DEBUG
-	throwError("GBasicObject::render():\n");
+	throwError("GBasicObject::render():" +d_getObjectIdentity() + "\n");
 #endif // _DEBUG
 
 }
@@ -248,7 +272,7 @@ void GBasicObject::toggleRender(const glm::mat4 & model_matrix)
 
 	}
 #ifdef _DEBUG
-	throwError("GBasicObject::toggleRender():\n");
+	throwError("GBasicObject::toggleRender():\n" + to_string(typeid(this).hash_code()));
 #endif // _DEBUG
 
 }
@@ -273,7 +297,7 @@ void GBasicObject::debugRender()
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
-	throwError("GBasicObject::debugRender():");
+	throwError("GBasicObject::debugRender():" + to_string(typeid(this).hash_code()));
 
 }
 #endif

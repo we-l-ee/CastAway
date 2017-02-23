@@ -133,7 +133,7 @@ void GMapRObject::render()
 	}
 
 #ifdef _DEBUG
-	throwError("GMapRObject::render():\n");
+	throwError("GMapRObject::render():" + d_getObjectIdentity() + "\n");
 #endif // _DEBUG
 
 }
@@ -158,7 +158,7 @@ void GMapRObject::toggleRender(const glm::mat4 & model_matrix)
 	}
 
 #ifdef _DEBUG
-	throwError("GMapRObject::toggleRender():\n");
+	throwError("GMapRObject::toggleRender():\n" + to_string(typeid(this).hash_code()));
 #endif // _DEBUG
 }
 
@@ -214,7 +214,7 @@ inline void GMapRObject::defaultRender()
 
 inline void GMapRObject::basicTextureRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(GProgram[TEXTURE]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -232,11 +232,14 @@ inline void GMapRObject::basicTextureRender()
 	glUniform1i(100, nextAvaibleTextureUnit);
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
+#ifdef _DEBUG
+	throwError("GMapRObject::basicTextureRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 }
 
 inline void GMapRObject::wireframeRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[WIREFRAME]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -249,13 +252,16 @@ inline void GMapRObject::wireframeRender()
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
 	glUniform4fv(1, 1, &wireframeColor[0]);
 	glDrawArrays(GL_LINES, 0, points_size);
+#ifdef _DEBUG
+	throwError("GMapRObject::wireframeRender():" + d_getObjectIdentity() + "\n");
+#endif // _DEBUG
 
 }
 
 inline void GMapRObject::shadowCalculationRender()
 {
 
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -264,18 +270,19 @@ inline void GMapRObject::shadowCalculationRender()
 	mvp = lightViewProj*GModel;
 
 	glUniformMatrix4fv(10, 1, GL_FALSE, glm::value_ptr(mvp));
+		to_string( glGetUniformLocation(GProgram[SHADOW_CALC],"mvp") ) );
 
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
 #ifdef _DEBUG
-	throwError("shadowCalculationRender::render():\n");
+	throwError("GMapRObject::shadowCalculationRender():" + d_getObjectIdentity() + "\n");
 #endif // _DEBUG
 
 }
 
 inline void GMapRObject::reflectionCalculationRender()
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(GProgram[TEXTURE]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -333,7 +340,7 @@ inline void GMapRObject::defaultToggleRender(const glm::mat4 & model)
 
 inline void GMapRObject::basicTextureToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(GProgram[TEXTURE]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -355,7 +362,7 @@ inline void GMapRObject::basicTextureToggleRender(const glm::mat4 & model)
 
 inline void GMapRObject::wireframeToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::WIREFRAME]);
+	glUseProgram(GProgram[WIREFRAME]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -373,7 +380,7 @@ inline void GMapRObject::wireframeToggleRender(const glm::mat4 & model)
 
 inline void GMapRObject::shadowCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::SHADOW_CALC]);
+	glUseProgram(GProgram[SHADOW_CALC]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -389,7 +396,7 @@ inline void GMapRObject::shadowCalculationToggleRender(const glm::mat4 & model)
 
 inline void GMapRObject::reflectionCalculationToggleRender(const glm::mat4 & model)
 {
-	glUseProgram(GProgram[(int)RenderMode::BASIC_TEXTURE]);
+	glUseProgram(GProgram[TEXTURE]);
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
@@ -471,9 +478,13 @@ void GMapRObject::debugRender()
 	glDrawArrays(GL_TRIANGLES, 0, points_size);
 
 #ifdef _DEBUG
-	throwError("GMapRObject::debugRender():");
+	throwError("GMapRObject::debugRender():" + to_string(typeid(this).hash_code()));
 #endif // _DEBUG
 
+}
+glm::vec3 GMapRObject::getReflectionNormal()
+{
+	return glm::vec3{ 0,1,0 };
 }
 #endif // _DEBUG
 
